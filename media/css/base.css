@@ -1,0 +1,15 @@
+/* fix me! :) */
+
+#main {
+    width: 100%;
+}
+
+#main #content {
+    background: #E0EAF8;
+}
+
+#main #sidebar {
+    width: 20em;
+    background: #DDFED1;
+    float: left;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+    <head>
+        <title>{% block title %}Okkar framtíð{% endblock %}</title>
+        <link rel="stylesheet" href="/media/css/base.css" type="text/css" media="screen" charset="utf-8">
+    </head>
+    <body>
+        <div id="main">
+            <div id="sidebar">
+            {% block sidebar %}
+            {# TODO: make paths dynamic #}
+            <ul class="navigation">
+                <li><a href="/login">Innskráning</a></li>
+                <li><a href="/register">Nýskráning</a></li>
+                <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
+            <ul>
+            {% endblock %}
+            </div>
+            <div id="content">
+            {% block content %}Content.{% endblock %}
+            </div>
+            
+        </div>
+    </body>
+</html>
