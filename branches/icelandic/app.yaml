@@ -1,4 +1,4 @@
-application: google-app-engine-community-values
+application: framtidarsyn 
 version: 1
 runtime: python
 api_version: 1
