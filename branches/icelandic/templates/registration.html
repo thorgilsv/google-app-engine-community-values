@@ -1,0 +1,72 @@
+{% extends "index.html" %}
+
+
+{% block title %}{{ block.super }} | Nýskráning{% endblock %}
+{% block content %}
+<h2>Nýskráning</h2>
+
+<p>
+    Hvort sem verið er að skrá einn notanda eða marga notendur er það mjög
+    einfalt. Fyllið út reitina hér fyrir neðan og ef ykkur vantar nánari
+    upplýsingar þá er hnappur með spurningamerki við hvern lið sem hægt er að
+    smella á og fá frekari upplýsingar.
+</p>
+
+<form method="post">
+    <div class="field">
+        {{ errors.postal_code }}
+        <label>Póstnúmer</label>
+        <input type="text" name="postal_code" value="{{ previous.postal_code }}" />
+    </div>
+
+    {# This is for the sole purpose of populating the .participant_list. #}
+    {# No attempt is made by the Registration class to verify this field. #}
+    <div class="field">
+        <label>Fjöldi þáttakenda</label>
+        <input type="text" name="participant_count" />
+    </div>
+
+    {# TODO: Dynamically create arbitrary amount with JavaScript depdending on `participant_count`. #}
+    <div class="participant_list">
+        <div class="field">
+            <input type="text" />
+            <input type="radio" name="gender" value="male" />kk
+            <input type="radio" name="gender" value="female" />kvk
+        </div>
+    </div>
+
+    <div class="field">
+        {{ errors.email }}
+        <label>Netfang</label>
+        <input type="text" name="email" value="{{ previous.email }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.password }}
+        <label>Lykilorð</label>
+        <input type="password" name="password" value="{{ previous.password }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.password_confirm }}
+        <label>Lykilorð aftur</label>
+        <input type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.school }}
+        <label>Skóli</label>
+        <input type="text" name="school" value="{{ previous.school }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.class }}
+        <label>Bekkur</label>
+        <input type="text" name="class" value="{{ previous.class }}" />
+    </div>
+
+    <div class="field">
+        <input type="submit" />
+    </div>
+</form>
+{% endblock %}
