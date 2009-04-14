@@ -12,15 +12,15 @@
 {{ min_values }} gildi nauðsynleg. {# minimum number of values to require for form before allowing to save (use in javascript) #}
 
 <form method="post">
-    {% for field_number in field_list %}
+    {% for field_values in field_values %}
     <div class="field">
         {{ forloop.counter }}.
-        <input type="text" name="value_{{ field_number }}" />
+        <input type="text" name="value_{{ field_values.0 }}" value="{{ field_values.1 }}" />
         
         {# update hidden fields with values from 0-99 with jQuery sliders #}
-        <input type="hidden" name="current_state_{{ field_number }}" />
-        <input type="hidden" name="headed_state_{{ field_number }}" />
-        <input type="hidden" name="ideal_state_{{ field_number }}" />
+        <input type="hidden" name="current_state_{{ field_values.0 }}" value="{{ field_values.2 }}" />
+        <input type="hidden" name="headed_state_{{ field_values.0 }}" value="{{ field_values.3 }}" />
+        <input type="hidden" name="ideal_state_{{ field_values.0 }}" value="{{ field_values.4 }}" />
     </div>
     {% endfor %}
     <div class="field">

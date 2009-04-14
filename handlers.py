@@ -1,3 +1,5 @@
+import re
+
 from google.appengine.ext import webapp
 
 from util import render_template
@@ -41,23 +43,80 @@ class MainPage(webapp.RequestHandler):
     
     def get(self):
         self.response.out.write(render_template('index.html'))
-            
-            
+
 class Assignment(FormRequestHandler):
     #TODO: require login
     path = '/assignment'
     
+    field_count = 10
+    mandatory_field_count = 5
+    
+    def get_default_tuple(self, number):
+        #TODO: change from tuple to class for dramatically increased readability
+        return (number, '', '50', '50', '50')
+    
+    def get_field_list(self, count, from_number=0):
+        """Return a tuple of default values."""
+        return [self.get_default_tuple(from_number + number) for number in range(count)]
+    
     def get(self):
         self.response.out.write(render_template('assignment.html', {
-            'field_list': range(10),
+            'field_values': self.get_field_list(self.field_count),
             'min_values': 5,
         }))
         
     def post(self):
-        self.response.out.write(render_template('assignment.html', {
-            'field_list': range(10),
-            'min_values': 5,
-        }))
+        #TODO: fix undercommenting
+        field_values = []
+        
+        # Fill `field_values` with values of non-empty fields.
+        for number in range(self.field_count):
+            prefixes = ('value', 'current_state', 'headed_state', 'ideal_state')
+            fields_tuple = tuple()
+            
+            for prefix in prefixes:
+                field_name = '%s_%d' % (prefix, number)
+            
+                if field_name in self.request.POST:
+                    fields_tuple += (self.request.POST[field_name],)
+                else:
+                    continue
+            
+            default_tuple = self.get_default_tuple(number)
+            value_count = len(default_tuple[1:])
+            
+            #TODO: check that makes sure that value words are distinct -- any(...) class list
+            
+            if len(fields_tuple) != value_count:
+                # Discard tuple if any fields are missing.
+                continue
+            elif fields_tuple == default_tuple[1:]:
+                # Discard tuple if equal to default (empty).
+                continue
+            else:
+                # If all fields are present, put it in the list of tuples.
+                field_values.append((len(field_values),) + fields_tuple)
+        
+        non_empty_field_count = len(field_values)
+        
+        # Fill up the field_values tuple with empty fields to make up for the
+        # ones that were empty or invalid. This way, non-empty fields will be
+        # grouped together at the top.
+        
+        has_enough_data = non_empty_field_count >= self.mandatory_field_count
+        
+        if has_enough_data:
+            #TODO: place field_values in the database
+            #TODO: make this a redirect
+            self.response.out.write("The form was valid, and this should be a redirection to the next assignment.")
+        else:
+            field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count)
+            
+            self.response.out.write(render_template('assignment.html', {
+                'field_values': field_values,
+                'min_values': 5,
+            }))
+
     
 class Registration(FormRequestHandler):
     """Register a group for it to be able to participate."""
