@@ -42,6 +42,23 @@ class MainPage(webapp.RequestHandler):
     def get(self):
         self.response.out.write(render_template('index.html'))
             
+            
+class Assignment(FormRequestHandler):
+    #TODO: require login
+    path = '/assignment'
+    
+    def get(self):
+        self.response.out.write(render_template('assignment.html', {
+            'field_list': range(10),
+            'min_values': 5,
+        }))
+        
+    def post(self):
+        self.response.out.write(render_template('assignment.html', {
+            'field_list': range(10),
+            'min_values': 5,
+        }))
+    
 class Registration(FormRequestHandler):
     """Register a group for it to be able to participate."""
     path = '/register'
