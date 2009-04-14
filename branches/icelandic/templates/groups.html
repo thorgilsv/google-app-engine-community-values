@@ -1,0 +1,59 @@
+{% extends "index.html" %}
+
+
+{% block title %}{{ block.super }} | Hópar {% endblock %}
+{% block content %}
+<h2>Hópar</h2>
+
+<p>
+    Hér sérðu hvaða hópum þú ert í, einnig er hægt að stofna hópa og bæta einstaklingum við í hópa.
+</p>
+
+<h2>Stofna hóp</h2>
+<form method="post" action="/groups">
+    <div class="field">
+        <label>Nafn á hópnum</label>
+        <input type="text" name="name" value="" />
+    </div>
+
+    <div class="field">
+        <input type="submit"  name="add_group" value="Stofna hóp"/>
+    </div>
+    
+</form>
+
+<h2>Bæta meðlimum í hópa</h2>
+<form method="post">
+    <div class="field">
+        <label>Nafn á hópnum</label>
+        <input type="text" name="name" value="" />
+    </div>
+
+    <div class="field">
+        <input type="submit" name="add_member" value="Bæta meðlim" />
+    </div>
+    
+</form>
+    
+<h2>Fjarlægja meðlim úr hóp</h2>
+<form method="post">
+    <div class="field">
+        <label>Nafn á hópnum</label>
+        <input type="text" name="name" value="" />
+    </div>
+
+    <div class="field">
+        <input type="submit" name="remove_member" value="Fjarlægja meðlim úr hópnum"/>
+    </div>
+    
+</form>
+
+<h2>Hópar sem þú ert í og aðrir meðlimir hópsinns</h2>
+
+    {% for group in groups %}
+    <div class="field">
+        {{group.name}}        
+    </div>
+    {% endfor %}
+
+{% endblock %}
