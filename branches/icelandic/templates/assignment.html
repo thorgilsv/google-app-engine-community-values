@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+
+{% block title %}{{ block.super }} | Verkefni {{ assignment.number }}{% endblock %}
+{% block content %}
+<h2>Verkefni {{ assignment.number }}</h2>
+
+<p class="question">
+    {{ assignment.question }}
+</p>
+
+{{ min_values }} gildi nauðsynleg. {# minimum number of values to require for form before allowing to save (use in javascript) #}
+
+<form method="post">
+    {% for field_number in field_list %}
+    <div class="field">
+        {{ forloop.counter }}.
+        <input type="text" name="value_{{ field_number }}" />
+        
+        {# update hidden fields with values from 0-99 with jQuery sliders #}
+        <input type="hidden" name="current_state_{{ field_number }}" />
+        <input type="hidden" name="headed_state_{{ field_number }}" />
+        <input type="hidden" name="ideal_state_{{ field_number }}" />
+    </div>
+    {% endfor %}
+    <div class="field">
+        <input type="submit" />
+    </div>
+</form>
+{% endblock %}
