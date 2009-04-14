@@ -1,8 +1,11 @@
+# coding: utf-8
 import re
 
 from google.appengine.ext import webapp
-
+from google.appengine.api import mail
 from util import render_template
+
+from database import *
 
 class FormRequestHandler(webapp.RequestHandler):
     """
@@ -132,7 +135,11 @@ class Registration(FormRequestHandler):
         self.run_prefixed_methods('validate_', *args, **kwargs)
         
     def get(self):
-        self.response.out.write(render_template('registration.html'))
+        self.response.out.write(render_template('registration.html',{
+                'members': self.get_members(),
+            }))
+        
+    def get_members(self): return TempMember.gql("order by date desc")
         
     def post(self):
         # Data that is ready to be inserted into the database.
@@ -149,14 +156,37 @@ class Registration(FormRequestHandler):
             
             self.response.out.write(render_template('registration.html', {
                 'errors': self.field_errors,
-                'previous': self.request.POST
+                'previous': self.request.POST,
+                'members': self.get_members(),
             }))
         else:
-            # Redirect to login if there were no field errors.
+            # insert into temp members table
+            tmpMember = TempMember()
+            tmpMember.name = self.request.get('name')
+            tmpMember.password = self.request.get('password')
+            tmpMember.email = self.request.get('email')
+            tmpMember.age = int(self.request.get('age'))
+            tmpMember.gender = self.request.get('gender')
+            tmpMember.school = self.request.get('school')
+            tmpMember.postcode = int(self.request.get('postal_code'))
+            tmpMember.schoollvl = self.request.get('class')
+            tmpMember.put()
             
+            # send confirmation email and inform the user of this
+            mail.send_mail(sender="support@hugmyndaraduneytid.is",
+                    to= tmpMember.email,
+                    subject="Staðfesta nýskráningu",
+                    body="""
+                                        
+                        Vinnsamlega fylgið meðfylgjandi hlekk til að virkja nýskráningu.
+                    
+                        Hugmyndaráðuneytið
+                        """)
+            
+            self.response.out.write("Þér hefur verið sendur tölvupóstur til að virkja innskráningu þína. <a href="""+Registration.path+"""> Til Baka </a> """)
             #TODO: Do something with `self.clean_data`.
             
-            self.redirect(Login.path)
+            #self.redirect(Login.path)
             
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code')
@@ -181,21 +211,34 @@ class Registration(FormRequestHandler):
         if postal_code in valid_postal_codes:
             self.clean_data['postal_code'] = postal_code
         else:
-            self.field_errors['postal_code'] = "Expected valid postal code."
+            self.field_errors['postal_code'] = "Postnúmer er ekki rétt."
             
     def validate_email(self):
         """Validate the e-mail address pattern and not whether it is active."""
-        pass #TODO
+        email = self.request.get('email')
+        if mail.is_email_valid(email):
+            self.clean_data['email'] = email            
+        else:
+            self.field_errors['email'] = "Netfang er ekki rétt."
         
     def validate_passwords(self):
         """Validate the password and password confirmation fields."""
+        password = self.request.get('password')
+        password_confirm = self.request.get('password_confirm')
+        if password_confirm == password:
+            self.clean_data['password'] = password            
+        else:
+            self.field_errors['password'] = "Lykilorðin þurfa að vera eins."
+            
+    def validate_age(self):
         pass #TODO
         
-    def validate_school(self):
-        pass #TODO
-        
-    def validate_class(self):
-        pass #TODO
+    #using drop down list makes this unessesary
+    #def validate_school(self):
+    #    pass #TODO
+    #    
+    #def validate_class(self):
+    #    pass #TODO
             
 class Login(FormRequestHandler):
     path = '/login'
@@ -215,3 +258,47 @@ class Login(FormRequestHandler):
         # TODO: use checks from self.get
         
         self.response.out.write("To be done: Login processing.")
+        
+                
+class Groups(FormRequestHandler):
+    path = '/groups'
+    
+    def get_Groups(self): return Group.gql("ORDER BY date DESC")
+    
+    def get(self):
+        # TODO: checks
+        #  1. does the user support cookies?
+        #     - yes: continue
+        #     - no: warn user, provide instructions
+        #  2. is the user already logged in?
+        #     - yes: redirect to post-logout page
+        #     - no: display form
+        
+        self.response.out.write(render_template('groups.html',{
+            'groups': self.get_Groups(),
+        }))
+        
+    def add_group(self):
+        group = Group()
+        group.name = self.request.get('name')
+        group.put()
+        
+    def remove_member(self, email):
+        q = Group.gql("Where email = :1", email)
+        results = q.fetch(1)
+        Group.delete(results)
+        
+    def add_member(self):
+        group = Group()
+        group.name = self.request.get('name')
+        group.put()
+
+    def post(self):
+        if ( self.request.get('add_member') ): self.add_member()
+        if ( self.request.get('remove_member') ) : self.remove_member()
+        if ( self.request.get('add_group') )  : self.add_group()   
+        
+        self.redirect('/groups')
+        
+    
+        
