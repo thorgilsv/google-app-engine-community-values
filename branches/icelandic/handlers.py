@@ -231,7 +231,12 @@ class Registration(FormRequestHandler):
             self.field_errors['password'] = "Lykilorðin þurfa að vera eins."
             
     def validate_age(self):
-        pass #TODO
+        age = self.request.get('age')
+        if age.isdigit():
+            self.clean_data['age'] = age            
+        else:
+            self.field_errors['age'] = "Aldur er ekki réttur"
+        
         
     #using drop down list makes this unessesary
     #def validate_school(self):
