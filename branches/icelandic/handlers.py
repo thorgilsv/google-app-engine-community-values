@@ -4,6 +4,7 @@ import re
 from google.appengine.ext import webapp
 from google.appengine.api import mail
 from util import render_template
+import sha, random
 
 from database import *
 
@@ -160,6 +161,11 @@ class Registration(FormRequestHandler):
                 'members': self.get_members(),
             }))
         else:
+            # create activation key
+            password = self.request.get('password')
+            salt = sha.new(str(random.random())).hexdigest()[:5]
+            activation_key = sha.new(salt+password).hexdigest()
+
             # insert into temp members table
             tmpMember = TempMember()
             tmpMember.name = self.request.get('name')
@@ -170,20 +176,21 @@ class Registration(FormRequestHandler):
             tmpMember.school = self.request.get('school')
             tmpMember.postcode = int(self.request.get('postal_code'))
             tmpMember.schoollvl = self.request.get('class')
-            tmpMember.put()
+            tmpMember.activation_key = activation_key
+            tmpMember.put()            
             
             # send confirmation email and inform the user of this
-            mail.send_mail(sender="support@hugmyndaraduneytid.is",
-                    to= tmpMember.email,
-                    subject="Staðfesta nýskráningu",
-                    body="""
-                                        
-                        Vinnsamlega fylgið meðfylgjandi hlekk til að virkja nýskráningu.
-                    
-                        Hugmyndaráðuneytið
-                        """)
+            #mail.send_mail(sender="support@hugmyndaraduneytid.is",
+            #        to= tmpMember.email,
+            #        subject="Staðfesta nýskráningu",
+            #        body="""
+            #                            
+            #            Vinnsamlega fylgið meðfylgjandi hlekk til að virkja nýskráningu.
+            #        
+            #            Hugmyndaráðuneytið
+            #            """)
             
-            self.response.out.write("Þér hefur verið sendur tölvupóstur til að virkja innskráningu þína. <a href="""+Registration.path+"""> Til Baka </a> """)
+            self.response.out.write(render_template('email_sent.html'))
             #TODO: Do something with `self.clean_data`.
             
             #self.redirect(Login.path)
@@ -257,7 +264,7 @@ class Login(FormRequestHandler):
         #     - yes: redirect to post-logout page
         #     - no: display form
         
-        self.response.out.write('To be done: Login template.')
+        self.response.out.write(render_template('login.html'))
         
     def post(self):
         # TODO: use checks from self.get

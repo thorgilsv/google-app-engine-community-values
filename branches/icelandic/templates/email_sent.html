@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+
+
+{% block title %}{{ block.super }} | Tölvupóstur {% endblock %}
+{% block content %}
+<h2>Tölvupóstur</h2>
+ <div class="field">
+Þér hefur verið sendur tölvupóstur til að virkja innskráningu þína. <a href="""+Registration.path+"""> Til Baka </a>
+</div>
+{% endblock %}

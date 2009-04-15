@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+
+
+{% block title %}{{ block.super }} | Innskráning {% endblock %}
+{% block content %}
+<h2>Innskráning</h2>
+
+<form method="post" action="/groups">
+    <div class="field">
+        <label>Netfang</label>
+        <input type="text" name="email" value="" />
+    </div>
+    
+    <div class="field">
+        <label>Lykilorð</label>
+        <input type="password" name="password" value="" />
+    </div>
+
+    <div class="field">
+        <input type="submit"  name="add_group" value="Innskrá"/>
+    </div>
+    
+</form>
+
+{% endblock %}
