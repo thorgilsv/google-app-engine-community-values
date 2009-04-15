@@ -1,15 +1,25 @@
 /* fix me! :) */
 
 #main {
-    width: 100%;
+    width: 720px;
+    height: 520px;
+    margin-top: 85px;
+    margin-left: 85px;
 }
 
 #main #content {
     background: #E0EAF8;
 }
 
-#main #sidebar {
-    width: 20em;
+#sidebar {
+    width: 200px;
+    height: 520px;
     background: #DDFED1;
-    float: left;
+}
+
+#content {
+    width: 520px;
+    height: 520px;
+    margin-top: -540px;
+    margin-left: 200px;
 }
