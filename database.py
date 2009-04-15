@@ -13,6 +13,7 @@ class TempMember(db.Model):
     postcode = db.IntegerProperty()
     schoollvl = db.StringProperty()
     validationcode = db.StringProperty()
+    activation_key = db.StringProperty()
     date = db.DateTimeProperty(auto_now_add=True)
   
 class Member(db.Model):
