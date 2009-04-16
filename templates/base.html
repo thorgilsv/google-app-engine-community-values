@@ -13,18 +13,36 @@
             {% block sidebar %}
             {# TODO: make paths dynamic #}
             <ul class="navigation">
+            {% ifequal  lvl "outer" %}            
                 <li><a href="/login">Innskráning</a></li>
                 <li><a href="/register">Nýskráning</a></li>
-                <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
-            </ul>
                 
-            <h2>Innrasvæði</h2>
-            <ul class="navigation">
-                <li><a href="/">Útskráning</a> {# TODO: add logout #} </li>
+            {% endifequal  %}
+
+            {% ifequal lvl "inner" %}    
+            {#<h2>Innrasvæði</h2>#}
+            
                 <li><a href="/">Forsíða</a></li>
+                <li><a href="/">Útskráning</a> {# TODO: add logout #} </li>                
                 <li><a href="/assignment">Verkefni</a> {# TODO: add verkefni dynamic #}</li>
                 <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
-            <ul>
+            {% endifequal  %}
+            {%ifequal  lvl "outer" %} 
+            {#<h2>Ytrasvæði</h2>#}
+            
+                <li><a href="/">Forsíða</a></li>
+                <li><a href="/about">Um verkefnið</a></li>
+                <li><a href="/why">Af hverju þurfum við framtíðarsýn?</a></li>
+                <li><a href="/your_opinion">Af hverju skiptir þín skoðun máli?</a></li>
+                <li><a href="/for_all">Er verkefnið fyrir alla aldurshópa?</a></li>
+                <li><a href="/society">Hvernig samfélag viljum við?</a></li>
+                <li><a href="/values">Hvað eru gildi og til hvers þurfum við þau? </a></li>
+                <li><a href="/project_owners">Hver stendur að verkefninu?</a></li>
+                <li><a href="/information">Viltu fræðast meira?</a></li>
+                <li><a href="/images">Myndir og annað efni sem frjálst er að nota</a></li>
+                <li><a href="/participation">Þátttaka í verkefninu</a></li>
+            {% endifequal  %}
+            </ul>
             {% endblock %}
             </div>
             <div id="content">

@@ -35,13 +35,10 @@
 
     {# TODO We need this to be with respect to number of participants. #}
     <div class="field">
-<<<<<<< .mine
-    {% for each in participants %}
-=======
-        {{ errors.age }}
-        {{ errors.gender }}
->>>>>>> .r10
+
+    {% for each in participants %}        
         <div class="field">
+        {{ errors.age }}
             Aldur <input type="text" name="age" value="{{ previous.age }}"/>
             <input type="radio" name="gender" value="kk" />kk
             <input type="radio" name="gender" value="kvk" />kvk
