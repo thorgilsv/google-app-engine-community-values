@@ -168,14 +168,14 @@ class Registration(FormRequestHandler):
 
             # insert into temp members table
             tmpMember = TempMember()
-            tmpMember.name = self.request.get('name')
+            tmpMember.name = self.clean_data['name']
             tmpMember.password = self.request.get('password')
-            tmpMember.email = self.request.get('email')
-            tmpMember.age = int(self.request.get('age'))
-            tmpMember.gender = self.request.get('gender')
-            tmpMember.school = self.request.get('school')
-            tmpMember.postcode = int(self.request.get('postal_code'))
-            tmpMember.schoollvl = self.request.get('class')
+            tmpMember.email = self.clean_data['email']
+            tmpMember.age = int(self.clean_data['age'])
+            tmpMember.gender = self.clean_data['gender']
+            tmpMember.school = self.clean_data['school']
+            tmpMember.postcode = int(self.clean_data['postal_code'])
+            tmpMember.schoollvl = self.clean_data['class']
             tmpMember.activation_key = activation_key
             tmpMember.put()            
             
@@ -217,9 +217,20 @@ class Registration(FormRequestHandler):
         
         if postal_code in valid_postal_codes:
             self.clean_data['postal_code'] = postal_code
+        elif not postal_code:
+            self.field_errors['postal_code'] = "Póstnúmer vantar."
         else:
             self.field_errors['postal_code'] = "Postnúmer er ekki rétt."
             
+    def validate_name(self):
+        name_regex = re.compile("^[\.\w'\- ]*$", re.UNICODE) # Sr. Eðvald O'Brien Kaplan-Moss
+        name = self.request.get('name')
+        
+        if name_regex.match(name):
+            self.clean_data['name'] = name
+        else:
+            self.field_errors['name'] = "Nafnið má innihalda bókstafi, ., ', - og bil."
+        
     def validate_email(self):
         """Validate the e-mail address pattern and not whether it is active."""
         email = self.request.get('email')
@@ -232,25 +243,47 @@ class Registration(FormRequestHandler):
         """Validate the password and password confirmation fields."""
         password = self.request.get('password')
         password_confirm = self.request.get('password_confirm')
-        if password_confirm == password:
-            self.clean_data['password'] = password            
+            
+        if not password:
+            self.field_errors['password'] = "Velja þarf lykilorð."
+        elif password_confirm == password:
+            self.clean_data['password'] = password
         else:
             self.field_errors['password'] = "Lykilorðin þurfa að vera eins."
             
     def validate_age(self):
         age = self.request.get('age')
-        if age.isdigit():
+        if not age:
+            self.field_errors['age'] = "Velja þarf aldur."
+        elif age.isdigit():
             self.clean_data['age'] = age            
         else:
             self.field_errors['age'] = "Aldur er ekki réttur"
         
+    def validate_gender(self):
+        gender = self.request.get('gender')
         
-    #using drop down list makes this unessesary
-    #def validate_school(self):
-    #    pass #TODO
-    #    
-    #def validate_class(self):
-    #    pass #TODO
+        if gender:
+            if gender in ('kk', 'kvk'):
+                self.clean_data['gender'] = gender
+            else:
+                self.field_errors['gender'] = "Óþekkt snið á kyni."
+        else:
+            self.field_errors['gender'] = "Kyn vantar."
+        
+    def validate_school(self):
+        school = self.request.get('school')
+        self.clean_data['school'] = school
+        
+    def validate_class(self):
+        klass = self.request.get('class')
+        
+        if klass == "empty":
+            self.field_errors['class'] = "Bekkur ekki valinn."
+        elif re.match("^([1-9]|10)\. bekkur$", klass):
+            self.clean_data['class'] = klass
+        else:
+            self.field_errors['class'] = "Óþekkt snið fyrir bekk."
             
 class Login(FormRequestHandler):
     path = '/login'
