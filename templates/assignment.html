@@ -3,7 +3,7 @@
 
 {% block title %}{{ block.super }} | Verkefni {{ assignment.number }}{% endblock %}
 {% block content %}
-<h2>Verkefni {{ assignment.number }}</h2>
+<h2>{{ assignment.name }}</h2>
 
 <p class="question">
     {{ assignment.question }}
@@ -24,7 +24,7 @@
     </div>
     {% endfor %}
     <div class="field">
-        <input type="submit" />
+        <input type="submit" name="quit" value="Hætta í bili"/> <input type="submit" name="completed" value="Verkefni lokið"/>
     </div>
 </form>
 {% endblock %}
