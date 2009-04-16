@@ -12,30 +12,24 @@
     </head>
     <body>
         <div id="main">
+            {{ user.email }}
             <div id="sidebar">
             {% block sidebar %}
             <ul class="navigation">
-                  
-                
                 <li><a href="/">Forsíða</a></li>
            
-            {% ifequal lvl "inner" %}    
-            {#<h2>Innrasvæði</h2>#}            
-              
-                <li><a href="/">Útskráning</a> {# TODO: add logout #} </li>
+                {% if user %}                                  
                 {% for assignment in assignments %}
                 <li><a href="/assignment?var={{assignment.name}}">{{assignment.name}}</a> </li>
                 {% endfor %}
 
                 <li><a href="/logout">Útskráning</a> </li>                
-
-                <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
-            {% endifequal  %}
-            {%ifequal  lvl "outer" %} 
-            {#<h2>Ytrasvæði</h2>#}            
-                
+                {% else %}                                 
                 <li><a href="/login">Innskráning</a></li>
                 <li><a href="/register">Nýskráning</a></li>
+                {% endif %}
+                
+                {% if show_info_links %}
                 <li><a href="/about">Um verkefnið</a></li>
                 <li><a href="/why">Af hverju þurfum við framtíðarsýn?</a></li>
                 <li><a href="/your_opinion">Af hverju skiptir þín skoðun máli?</a></li>
@@ -46,7 +40,8 @@
                 <li><a href="/information">Viltu fræðast meira?</a></li>
                 <li><a href="/images">Myndir og annað efni sem frjálst er að nota</a></li>
                 <li><a href="/participation">Þátttaka í verkefninu</a></li>
-            {% endifequal  %}
+                {% endif %}
+                <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
             </ul>
             {% endblock %}
             </div>
