@@ -5,8 +5,10 @@ from google.appengine.ext import webapp
 from google.appengine.api import mail
 from util import render_template
 import sha, random
-
 from database import *
+from django.contrib.sessions.models import Session
+
+
 
 class FormRequestHandler(webapp.RequestHandler):
     """
@@ -262,7 +264,7 @@ class Registration(FormRequestHandler):
             #self.response.out.write(render_template('email_sent.html', {'email': email }))
             #TODO: Do something with `self.clean_data`.
             
-            self.redirect(Login.path)
+            self.redirect(Assignment.path)
             
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code')
@@ -369,56 +371,66 @@ class Login(FormRequestHandler):
         #     - no: display form
         
         self.response.out.write(render_template('login.html',{'lvl': 'outer',}))
-        
+                
     def post(self):
-        # TODO: use checks from self.get
+        email = self.request.get('email')
+        password = self.request.get('password')        
+        q = Member.gql("where email = :1 and password = :2 ", email, password)
+        results = q.fetch(1)
         
-        self.response.out.write("To be done: Login processing.")
+        if len(results) == 1:
+            # TODO add sessions/cookies
+            self.redirect(Assignment.path)
+        else:
+            self.response.out.write(render_template('login.html',{
+                'lvl': 'outer',
+                'error': 'Annaðhvort netfang eða lykilorð er rangt.'}))
+        
         
                 
-class Groups(FormRequestHandler):
-    path = '/groups'
-    
-    def get_Groups(self): return Group.gql("ORDER BY date DESC")
-    
-    def get(self):
-        # TODO: checks
-        #  1. does the user support cookies?
-        #     - yes: continue
-        #     - no: warn user, provide instructions
-        #  2. is the user already logged in?
-        #     - yes: redirect to post-logout page
-        #     - no: display form
-        
-        self.response.out.write(render_template('groups.html',{
-            'groups': self.get_Groups(),
-        }))
-        
-    def add_group(self):
-        group = Group()
-        group.name = self.request.get('name')
-        group.email = self.request.get('email')
-        group.put()
-        groupMember = GroupMember()
-        group.name = self.request.get('name')
-        group.put()
-        
-    def remove_member(self, email):
-        q = Group.gql("Where email = :1", email)
-        results = q.fetch(1)
-        Group.delete(results)
-        
-    def add_member(self, email):
-        groupMember = GroupMember()
-        group.name = self.request.get('name')
-        group.put()
-
-    def post(self):
-        if ( self.request.get('add_member') ): self.add_member()
-        if ( self.request.get('remove_member') ) : self.remove_member()
-        if ( self.request.get('add_group') )  : self.add_group()   
-        
-        self.redirect('/groups')
+#class Groups(FormRequestHandler):
+#    path = '/groups'
+#    
+#    def get_Groups(self): return Group.gql("ORDER BY date DESC")
+#    
+#    def get(self):
+#        # TODO: checks
+#        #  1. does the user support cookies?
+#        #     - yes: continue
+#        #     - no: warn user, provide instructions
+#        #  2. is the user already logged in?
+#        #     - yes: redirect to post-logout page
+#        #     - no: display form
+#        
+#        self.response.out.write(render_template('groups.html',{
+#            'groups': self.get_Groups(),
+#        }))
+#        
+#    def add_group(self):
+#        group = Group()
+#        group.name = self.request.get('name')
+#        group.email = self.request.get('email')
+#        group.put()
+#        groupMember = GroupMember()
+#        group.name = self.request.get('name')
+#        group.put()
+#        
+#    def remove_member(self, email):
+#        q = Group.gql("Where email = :1", email)
+#        results = q.fetch(1)
+#        Group.delete(results)
+#        
+#    def add_member(self, email):
+#        groupMember = GroupMember()
+#        group.name = self.request.get('name')
+#        group.put()
+#
+#    def post(self):
+#        if ( self.request.get('add_member') ): self.add_member()
+#        if ( self.request.get('remove_member') ) : self.remove_member()
+#        if ( self.request.get('add_group') )  : self.add_group()   
+#        
+#        self.redirect('/groups')
         
     
         
