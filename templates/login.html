@@ -5,6 +5,12 @@
 {% block content %}
 <h2>Innskráning</h2>
 
+{% if user %}
+{{ user.email }}
+{% else %}
+Not logged in.
+{% endif %}
+
 <form method="post" action="/login">
     <div class="field">
     {{error}}
