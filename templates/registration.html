@@ -26,43 +26,48 @@
         <input type="text" name="postal_code" value="{{ previous.postal_code }}" />
     </div>
 
-   <!-- {# This is for the sole purpose of populating the .participant_list. #}
+    {# This is for the sole purpose of populating the .participant_list. #}
     {# No attempt is made by the Registration class to verify this field. #}
     <div class="field">
         <label>Fjöldi þáttakenda</label>
         <input type="text" name="participant_count" />
-    </div>-->
+    </div>
 
-    {# We are keeping this to each account. #}
+    {# TODO We need this to be with respect to number of participants. #}
     <div class="field">
+<<<<<<< .mine
+    {% for each in participants %}
+=======
         {{ errors.age }}
         {{ errors.gender }}
+>>>>>>> .r10
         <div class="field">
             Aldur <input type="text" name="age" value="{{ previous.age }}"/>
             <input type="radio" name="gender" value="kk" />kk
             <input type="radio" name="gender" value="kvk" />kvk
         </div>
+        {% endfor %}
     </div>
 
     <div class="field">
         {{ errors.email }}
-        <label>Netfang</label>
+        <label>Netfang*</label>
         <input type="text" name="email" value="{{ previous.email }}" />
     </div>
 
     <div class="field">
         {{ errors.password }}
-        <label>Lykilorð</label>
+        <label>Lykilorð*</label>
         <input type="password" name="password" value="{{ previous.password }}" />
     </div>
 
     <div class="field">
         {{ errors.password_confirm }}
-        <label>Lykilorð aftur</label>
+        <label>Lykilorð aftur*</label>
         <input type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
     </div>
 
-    <div class="field">
+  <!--  <div class="field">
         {{ errors.school }}
         <label>Skóli</label>
         <select name="school" size="1">
@@ -90,7 +95,7 @@
             <option>9. bekkur</option>
             <option>10. bekkur</option>
         </select>
-    </div>
+    </div>-->
 
     <div class="field">
         <input type="submit" name="register" value="Nýskrá"/>
