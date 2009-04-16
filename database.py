@@ -31,7 +31,7 @@ class Member(db.Model):
 class Group(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
     name = db.StringProperty()
-    email = db.EmailProperty()
+    mamber = db.ReferenceProperty(Member)
     
 class GroupMember(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
