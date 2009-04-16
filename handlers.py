@@ -9,12 +9,24 @@ from database import *
 from django.contrib.sessions.models import Session
 import session
 
-class FormRequestHandler(webapp.RequestHandler):
+class CustomRequestHandler(webapp.RequestHandler):
     """
     Extends Google App Engine's `webapp.RequestHandler` to add some form
     processing capabilities.
     """
+    def render_to_response(self, template_name, context={}):
+        """Render a template with request context common to all templates."""
+        request_context = {
+            'user': session.get_member(self),
+        }
+        
+        # Merge contexts, overriding request context if clashing.
+        request_context.update(context)
+        
+        self.response.out.write(render_template(template_name, context=request_context))
+    
     def require_login(self):
+        """Redirect to login if there's no active session."""
         #TODO: little time, but would be cooler as a decorator  
         if not session.get_session(self):
             self.redirect(Login.path)
@@ -47,73 +59,73 @@ class FormRequestHandler(webapp.RequestHandler):
         for method in validate_methods:
             validate_result = getattr(self, method)(*args, **kwargs)
 
-class MainPage(webapp.RequestHandler):
+class MainPage(CustomRequestHandler):
     path = '/'
     
     def get(self):
-        self.response.out.write(render_template('index.html',{'lvl': 'outer'}))
+        self.render_to_response('index.html', {'show_info_links': True})
         
-class About(webapp.RequestHandler):
+class About(CustomRequestHandler):
     path = '/about'
     
     def get(self):
-        self.response.out.write(render_template('about.html',{'lvl': 'outer'}))
+        self.render_to_response('about.html',{'show_info_links': True})
         
-class Why(webapp.RequestHandler):
+class Why(CustomRequestHandler):
     path = '/why'
     
     def get(self):
-        self.response.out.write(render_template('why.html',{'lvl': 'outer'}))        
+        self.render_to_response('why.html',{'show_info_links': True})       
 
-class YourOpinion(webapp.RequestHandler):
+class YourOpinion(CustomRequestHandler):
     path = '/your_opinion'
     
     def get(self):
-        self.response.out.write(render_template('your_opinion.html',{'lvl': 'outer'}))
+        self.render_to_response('your_opinion.html',{'show_info_links': True})
 
-class ForAll(webapp.RequestHandler):
+class ForAll(CustomRequestHandler):
     path = '/for_all'
     
     def get(self):
-        self.response.out.write(render_template('for_all.html',{'lvl': 'outer'}))
+        self.render_to_response('for_all.html',{'show_info_links': True})
 
-class Society(webapp.RequestHandler):
+class Society(CustomRequestHandler):
     path = '/society'
     
     def get(self):
-        self.response.out.write(render_template('society.html',{'lvl': 'outer'}))
+        self.render_to_response('society.html',{'show_info_links': True})
         
-class Values(webapp.RequestHandler):
+class Values(CustomRequestHandler):
     path = '/values'
     
     def get(self):
-        self.response.out.write(render_template('values.html',{'lvl': 'outer'}))
+        self.render_to_response('values.html',{'show_info_links': True})
 
-class ProjectOwners(webapp.RequestHandler):
+class ProjectOwners(CustomRequestHandler):
     path = '/project_owners'
     
     def get(self):
-        self.response.out.write(render_template('project_owners.html',{'lvl': 'outer'}))
+        self.render_to_response('project_owners.html',{'show_info_links': True})
 
-class Information(webapp.RequestHandler):
+class Information(CustomRequestHandler):
     path = '/information'
     
     def get(self):
-        self.response.out.write(render_template('information.html',{'lvl': 'outer'}))
+        self.render_to_response('information.html',{'show_info_links': True})
 
-class Images(webapp.RequestHandler):
+class Images(CustomRequestHandler):
     path = '/images'
     
     def get(self):
-        self.response.out.write(render_template('images.html',{'lvl': 'outer'}))
+        self.render_to_response('images.html',{'show_info_links': True})
 
-class Participation(webapp.RequestHandler):
+class Participation(CustomRequestHandler):
     path = '/participation'
     
     def get(self):
-        self.response.out.write(render_template('participation.html',{'lvl': 'outer'}))
+        self.render_to_response('participation.html',{'show_info_links': True})
         
-class Assignment(FormRequestHandler):
+class Assignment(CustomRequestHandler):
     #TODO: require login
     path = '/assignment'
     
@@ -165,13 +177,13 @@ class Assignment(FormRequestHandler):
         self.deleteAssignments()
         self.createAssignments()        
         
-        self.response.out.write(render_template('assignment.html', {
+        self.render_to_response('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
             'min_values': 5,
             'lvl': 'inner',
             'assignments': self.getAssignments(),
             'assignment': self.getAssignment(self.request.get('var')),
-        }))
+        })
         
     def post(self):
         self.require_login()
@@ -228,14 +240,14 @@ class Assignment(FormRequestHandler):
         else:
             field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count)
             
-            self.response.out.write(render_template('assignment.html', {
+            self.render_to_response('assignment.html', {
                 'field_values': field_values,
                 'min_values': 5,
                 'lvl': 'inner',
-            }))
+            })
 
     
-class Registration(FormRequestHandler):
+class Registration(CustomRequestHandler):
     """Register a group for it to be able to participate."""
     path = '/register'
     
@@ -249,10 +261,9 @@ class Registration(FormRequestHandler):
         self.run_prefixed_methods('validate_', *args, **kwargs)
         
     def get(self):
-        self.response.out.write(render_template('registration.html',{
+        self.render_to_response('registration.html', {
                 'members': self.get_members(),                
-                'lvl': 'outer',
-            }))
+            })
         
     def get_members(self): return TempMember.gql("order by date desc")
         
@@ -269,12 +280,11 @@ class Registration(FormRequestHandler):
         if self.field_errors:
             # Display the form again if there were field errors.
             
-            self.response.out.write(render_template('registration.html', {
+            self.render_to_response('registration.html', {
                 'errors': self.field_errors,
                 'previous': self.request.POST,
                 'members': self.get_members(),
-                'lvl': 'outer',
-            }))
+            })
         else:
             # create activation key
             password = self.request.get('password')
@@ -310,7 +320,7 @@ class Registration(FormRequestHandler):
             #            Hugmyndaráðuneytið
             #            """)
             
-            #self.response.out.write(render_template('email_sent.html', {'email': email }))
+            #self.render_to_response('email_sent.html', {'email': email })
             #TODO: Do something with `self.clean_data`.
             
             self.redirect(Assignment.path)
@@ -407,7 +417,7 @@ class Registration(FormRequestHandler):
     #    else:
     #        self.field_errors['class'] = "Óþekkt snið fyrir bekk."
             
-class Login(FormRequestHandler):
+class Login(CustomRequestHandler):
     path = '/login'
     
     def get(self):
@@ -419,10 +429,10 @@ class Login(FormRequestHandler):
         #     - yes: redirect to post-logout page
         #     - no: display form
         
-        self.response.out.write(render_template('login.html',{
-            'lvl': 'outer',
+        self.render_to_response('login.html',{
+            'show_info_links': True,
             'user': session.get_member(self)
-        }))
+        })
                 
     def post(self):
         email = self.request.get('email')
@@ -435,11 +445,12 @@ class Login(FormRequestHandler):
             session.login(self, member)
             self.redirect(Assignment.path)
         else:
-            self.response.out.write(render_template('login.html',{
-                'lvl': 'outer',
-                'error': 'Annaðhvort netfang eða lykilorð er rangt.'}))
+            self.render_to_response('login.html',{
+                'show_info_links': True,
+                'error': 'Annaðhvort netfang eða lykilorð er rangt.',
+            })
                 
-class Logout(FormRequestHandler):
+class Logout(CustomRequestHandler):
     path = '/logout'
     
     def get(self):
@@ -452,7 +463,7 @@ class Logout(FormRequestHandler):
         
         
                 
-#class Groups(FormRequestHandler):
+#class Groups(CustomRequestHandler):
 #    path = '/groups'
 #    
 #    def get_Groups(self): return Group.gql("ORDER BY date DESC")
