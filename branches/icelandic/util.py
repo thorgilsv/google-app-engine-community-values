@@ -1,5 +1,6 @@
 import os
 
+import settings
 from google.appengine.ext.webapp import template
 
 def render_template(template_name, context={}):
