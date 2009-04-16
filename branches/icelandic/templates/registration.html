@@ -35,9 +35,11 @@
 
     {# We are keeping this to each account. #}
     <div class="field">
+        {{ errors.age }}
+        {{ errors.gender }}
         <div class="field">
             Aldur <input type="text" name="age" value="{{ previous.age }}"/>
-            <input type="radio" name="gender" value="KK" />kk
+            <input type="radio" name="gender" value="kk" />kk
             <input type="radio" name="gender" value="kvk" />kvk
         </div>
     </div>
@@ -64,6 +66,7 @@
         {{ errors.school }}
         <label>Skóli</label>
         <select name="school" size="1">
+                <option value="empty">-- VELDU SKÓLA --</option>
                 <option>1 Skoli</option>
                 <option>2 Skoli</option>
                 <option>3 Skoli</option>
@@ -75,16 +78,17 @@
         {{ errors.class }}
         <label>Bekkur</label>
         <select name="class" size="1">
-            <option>1 bekkur</option>
-            <option>2 bekkur</option>
-            <option>3 bekkur</option>
-            <option>4 bekkur</option>
-            <option>5 bekkur</option>
-            <option>6 bekkur</option>
-            <option>7 bekkur</option>
-            <option>8 bekkur</option>
-            <option>9 bekkur</option>
-            <option>10 bekkur</option>
+            <option value="empty">-- VELDU BEKK --</option>
+            <option>1. bekkur</option>
+            <option>2. bekkur</option>
+            <option>3. bekkur</option>
+            <option>4. bekkur</option>
+            <option>5. bekkur</option>
+            <option>6. bekkur</option>
+            <option>7. bekkur</option>
+            <option>8. bekkur</option>
+            <option>9. bekkur</option>
+            <option>10. bekkur</option>
         </select>
     </div>
 
