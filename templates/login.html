@@ -5,7 +5,10 @@
 {% block content %}
 <h2>Innskráning</h2>
 
-<form method="post" action="/groups">
+<form method="post" action="/login">
+    <div class="field">
+    {{error}}
+    </div>
     <div class="field">
         <label>Netfang</label>
         <input type="text" name="email" value="" />

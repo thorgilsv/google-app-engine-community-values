@@ -13,24 +13,22 @@
             {% block sidebar %}
             {# TODO: make paths dynamic #}
             <ul class="navigation">
-            {% ifequal  lvl "outer" %}            
-                <li><a href="/login">Innskráning</a></li>
-                <li><a href="/register">Nýskráning</a></li>
+                  
                 
-            {% endifequal  %}
-
-            {% ifequal lvl "inner" %}    
-            {#<h2>Innrasvæði</h2>#}
-            
                 <li><a href="/">Forsíða</a></li>
+           
+            {% ifequal lvl "inner" %}    
+            {#<h2>Innrasvæði</h2>#}            
+                
                 <li><a href="/">Útskráning</a> {# TODO: add logout #} </li>                
                 <li><a href="/assignment">Verkefni</a> {# TODO: add verkefni dynamic #}</li>
                 <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
             {% endifequal  %}
             {%ifequal  lvl "outer" %} 
-            {#<h2>Ytrasvæði</h2>#}
-            
-                <li><a href="/">Forsíða</a></li>
+            {#<h2>Ytrasvæði</h2>#}            
+                
+                <li><a href="/login">Innskráning</a></li>
+                <li><a href="/register">Nýskráning</a></li>
                 <li><a href="/about">Um verkefnið</a></li>
                 <li><a href="/why">Af hverju þurfum við framtíðarsýn?</a></li>
                 <li><a href="/your_opinion">Af hverju skiptir þín skoðun máli?</a></li>
