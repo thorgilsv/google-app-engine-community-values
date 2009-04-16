@@ -163,21 +163,26 @@ class Registration(FormRequestHandler):
         else:
             # create activation key
             password = self.request.get('password')
-            salt = sha.new(str(random.random())).hexdigest()[:5]
-            activation_key = sha.new(salt+password).hexdigest()
+            email = self.request.get('email')
+            age = self.request.get('age')       
+            postal_code = self.request.get('postal_code')
+            #salt = sha.new(str(random.random())).hexdigest()[:5]
+            #activation_key = sha.new(salt+password).hexdigest()
 
             # insert into temp members table
-            tmpMember = TempMember()
-            tmpMember.name = self.clean_data['name']
-            tmpMember.password = self.request.get('password')
-            tmpMember.email = self.clean_data['email']
-            tmpMember.age = int(self.clean_data['age'])
-            tmpMember.gender = self.clean_data['gender']
-            tmpMember.school = self.clean_data['school']
-            tmpMember.postcode = int(self.clean_data['postal_code'])
-            tmpMember.schoollvl = self.clean_data['class']
-            tmpMember.activation_key = activation_key
-            tmpMember.put()            
+
+            t = Member()
+            t.name = self.request.get('name')
+            t.password = password
+            t.email = email            
+            if age.strip() != '' : t.age = int(age)
+            t.gender = self.request.get('gender')
+            #t.school = self.request.get('school')
+            if postal_code.strip() != '' : t.postcode = int(postal_code)
+            #t.schoollvl = self.request.get('class')
+            #t.activation_key = activation_key
+            t.put()            
+
             
             # send confirmation email and inform the user of this
             #mail.send_mail(sender="support@hugmyndaraduneytid.is",
@@ -190,10 +195,10 @@ class Registration(FormRequestHandler):
             #            Hugmyndaráðuneytið
             #            """)
             
-            self.response.out.write(render_template('email_sent.html'))
+            #self.response.out.write(render_template('email_sent.html', {'email': email }))
             #TODO: Do something with `self.clean_data`.
             
-            #self.redirect(Login.path)
+            self.redirect(Login.path)
             
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code')
@@ -215,10 +220,11 @@ class Registration(FormRequestHandler):
         '840', '845', '850', '851', '860', '861', '870', '871', '880', '900',
         '902')
         
-        if postal_code in valid_postal_codes:
+        if postal_code in valid_postal_codes  or postal_code.strip() == '':
             self.clean_data['postal_code'] = postal_code
-        elif not postal_code:
-            self.field_errors['postal_code'] = "Póstnúmer vantar."
+        # postcode optional
+        #elif not postal_code:
+        #    self.field_errors['postal_code'] = "Póstnúmer vantar."
         else:
             self.field_errors['postal_code'] = "Postnúmer er ekki rétt."
             
@@ -226,7 +232,8 @@ class Registration(FormRequestHandler):
         name_regex = re.compile("^[\.\w'\- ]*$", re.UNICODE) # Sr. Eðvald O'Brien Kaplan-Moss
         name = self.request.get('name')
         
-        if name_regex.match(name):
+        # name optional
+        if name_regex.match(name) or name.strip() == '':
             self.clean_data['name'] = name
         else:
             self.field_errors['name'] = "Nafnið má innihalda bókstafi, ., ', - og bil."
@@ -253,37 +260,37 @@ class Registration(FormRequestHandler):
             
     def validate_age(self):
         age = self.request.get('age')
-        if not age:
-            self.field_errors['age'] = "Velja þarf aldur."
-        elif age.isdigit():
+        if age.isdigit() or age.strip() == '':
             self.clean_data['age'] = age            
         else:
             self.field_errors['age'] = "Aldur er ekki réttur"
         
-    def validate_gender(self):
-        gender = self.request.get('gender')
+    # gender is radio button and optional!    
+    #def validate_gender(self):
+    #    gender = self.request.get('gender')
+    #    
+    #    if gender:
+    #        if gender in ('kk', 'kvk'):
+    #            self.clean_data['gender'] = gender
+    #        else:
+    #            self.field_errors['gender'] = "Óþekkt snið á kyni."
+    #    else:
+    #        self.field_errors['gender'] = "Kyn vantar."
         
-        if gender:
-            if gender in ('kk', 'kvk'):
-                self.clean_data['gender'] = gender
-            else:
-                self.field_errors['gender'] = "Óþekkt snið á kyni."
-        else:
-            self.field_errors['gender'] = "Kyn vantar."
-        
-    def validate_school(self):
-        school = self.request.get('school')
-        self.clean_data['school'] = school
-        
-    def validate_class(self):
-        klass = self.request.get('class')
-        
-        if klass == "empty":
-            self.field_errors['class'] = "Bekkur ekki valinn."
-        elif re.match("^([1-9]|10)\. bekkur$", klass):
-            self.clean_data['class'] = klass
-        else:
-            self.field_errors['class'] = "Óþekkt snið fyrir bekk."
+    #Not part of the initial setup at least
+    #def validate_school(self):
+    #    school = self.request.get('school')
+    #    self.clean_data['school'] = school
+    #    
+    #def validate_class(self):
+    #    klass = self.request.get('class')
+    #    
+    #    if klass == "empty":
+    #        self.field_errors['class'] = "Bekkur ekki valinn."
+    #    elif re.match("^([1-9]|10)\. bekkur$", klass):
+    #        self.clean_data['class'] = klass
+    #    else:
+    #        self.field_errors['class'] = "Óþekkt snið fyrir bekk."
             
 class Login(FormRequestHandler):
     path = '/login'
@@ -326,6 +333,10 @@ class Groups(FormRequestHandler):
     def add_group(self):
         group = Group()
         group.name = self.request.get('name')
+        group.email = self.request.get('email')
+        group.put()
+        groupMember = GroupMember()
+        group.name = self.request.get('name')
         group.put()
         
     def remove_member(self, email):
@@ -333,8 +344,8 @@ class Groups(FormRequestHandler):
         results = q.fetch(1)
         Group.delete(results)
         
-    def add_member(self):
-        group = Group()
+    def add_member(self, email):
+        groupMember = GroupMember()
         group.name = self.request.get('name')
         group.put()
 
