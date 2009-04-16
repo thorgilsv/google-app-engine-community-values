@@ -46,8 +46,68 @@ class MainPage(webapp.RequestHandler):
     path = '/'
     
     def get(self):
-        self.response.out.write(render_template('index.html'))
+        self.response.out.write(render_template('index.html',{'lvl': 'outer'}))
+        
+class About(webapp.RequestHandler):
+    path = '/about'
+    
+    def get(self):
+        self.response.out.write(render_template('about.html',{'lvl': 'outer'}))
+        
+class Why(webapp.RequestHandler):
+    path = '/why'
+    
+    def get(self):
+        self.response.out.write(render_template('why.html',{'lvl': 'outer'}))        
 
+class YourOpinion(webapp.RequestHandler):
+    path = '/your_opinion'
+    
+    def get(self):
+        self.response.out.write(render_template('your_opinion.html',{'lvl': 'outer'}))
+
+class ForAll(webapp.RequestHandler):
+    path = '/for_all'
+    
+    def get(self):
+        self.response.out.write(render_template('for_all.html',{'lvl': 'outer'}))
+
+class Society(webapp.RequestHandler):
+    path = '/society'
+    
+    def get(self):
+        self.response.out.write(render_template('society.html',{'lvl': 'outer'}))
+        
+class Values(webapp.RequestHandler):
+    path = '/values'
+    
+    def get(self):
+        self.response.out.write(render_template('values.html',{'lvl': 'outer'}))
+
+class ProjectOwners(webapp.RequestHandler):
+    path = '/project_owners'
+    
+    def get(self):
+        self.response.out.write(render_template('project_owners.html',{'lvl': 'outer'}))
+
+class Information(webapp.RequestHandler):
+    path = '/information'
+    
+    def get(self):
+        self.response.out.write(render_template('information.html',{'lvl': 'outer'}))
+
+class Images(webapp.RequestHandler):
+    path = '/images'
+    
+    def get(self):
+        self.response.out.write(render_template('images.html',{'lvl': 'outer'}))
+
+class Participation(webapp.RequestHandler):
+    path = '/participation'
+    
+    def get(self):
+        self.response.out.write(render_template('participation.html',{'lvl': 'outer'}))
+        
 class Assignment(FormRequestHandler):
     #TODO: require login
     path = '/assignment'
@@ -67,6 +127,7 @@ class Assignment(FormRequestHandler):
         self.response.out.write(render_template('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
             'min_values': 5,
+            'lvl': 'inner'
         }))
         
     def post(self):
@@ -119,6 +180,7 @@ class Assignment(FormRequestHandler):
             self.response.out.write(render_template('assignment.html', {
                 'field_values': field_values,
                 'min_values': 5,
+                'lvl': 'inner',
             }))
 
     
@@ -137,7 +199,8 @@ class Registration(FormRequestHandler):
         
     def get(self):
         self.response.out.write(render_template('registration.html',{
-                'members': self.get_members(),
+                'members': self.get_members(),                
+                'lvl': 'outer',
             }))
         
     def get_members(self): return TempMember.gql("order by date desc")
@@ -159,6 +222,7 @@ class Registration(FormRequestHandler):
                 'errors': self.field_errors,
                 'previous': self.request.POST,
                 'members': self.get_members(),
+                'lvl': 'outer',
             }))
         else:
             # create activation key
@@ -304,7 +368,7 @@ class Login(FormRequestHandler):
         #     - yes: redirect to post-logout page
         #     - no: display form
         
-        self.response.out.write(render_template('login.html'))
+        self.response.out.write(render_template('login.html',{'lvl': 'outer',}))
         
     def post(self):
         # TODO: use checks from self.get
