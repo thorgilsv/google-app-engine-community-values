@@ -7,14 +7,17 @@ from util import render_template
 import sha, random
 from database import *
 from django.contrib.sessions.models import Session
-
-
+import session
 
 class FormRequestHandler(webapp.RequestHandler):
     """
     Extends Google App Engine's `webapp.RequestHandler` to add some form
     processing capabilities.
     """
+    def require_login(self):
+        #TODO: little time, but would be cooler as a decorator  
+        if not session.get_session(self):
+            self.redirect(Login.path)
     
     def run_prefixed_methods(self, prefix, *args, **kwargs):
         """
@@ -126,7 +129,7 @@ class Assignment(FormRequestHandler):
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
     def addAnswer(self, value, count, assignment):
-        #member = self.session.user 
+        member = self.session.user 
         answer = value
         answer_number = count
         assignment = assignment
@@ -158,9 +161,10 @@ class Assignment(FormRequestHandler):
             return each
     
     def get(self):
+        self.require_login()
         self.deleteAssignments()
-        self.createAssignments()
-        #assignment = self.getAssignment(self.request.get('var'))
+        self.createAssignments()        
+        
         self.response.out.write(render_template('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
             'min_values': 5,
@@ -170,6 +174,8 @@ class Assignment(FormRequestHandler):
         }))
         
     def post(self):
+        self.require_login()
+        
         #TODO: fix undercommenting
         field_values = []
         
@@ -207,6 +213,8 @@ class Assignment(FormRequestHandler):
         # ones that were empty or invalid. This way, non-empty fields will be
         # grouped together at the top.
         
+        #we will always sav the values alreaddy submitted
+        count=0
         for value in field_values:
                 if value == None: break
                 count+=1
@@ -215,12 +223,6 @@ class Assignment(FormRequestHandler):
         has_enough_data = non_empty_field_count >= self.mandatory_field_count
         
         if has_enough_data:
-            #TODO: place field_values in the database
-            count=0
-            for value in field_values:
-                if value == None: break
-                count+=1
-                addAnswer(value, count, assignment)
             #TODO: make this a redirect
             self.response.out.write("The form was valid, and this should be a redirection to the next assignment.")
         else:
@@ -417,21 +419,36 @@ class Login(FormRequestHandler):
         #     - yes: redirect to post-logout page
         #     - no: display form
         
-        self.response.out.write(render_template('login.html',{'lvl': 'outer',}))
+        self.response.out.write(render_template('login.html',{
+            'lvl': 'outer',
+            'user': session.get_member(self)
+        }))
                 
     def post(self):
         email = self.request.get('email')
-        password = self.request.get('password')        
-        q = Member.gql("where email = :1 and password = :2 ", email, password)
-        results = q.fetch(1)
+        password = self.request.get('password')       
+         
+        members = Member.gql("where email = :1 and password = :2 ", email, password)
+        member = members.get()
         
-        if len(results) == 1:
-            # TODO add sessions/cookies
+        if member:
+            session.login(self, member)
             self.redirect(Assignment.path)
         else:
             self.response.out.write(render_template('login.html',{
                 'lvl': 'outer',
                 'error': 'Annaðhvort netfang eða lykilorð er rangt.'}))
+                
+class Logout(FormRequestHandler):
+    path = '/logout'
+    
+    def get(self):
+        session.logout(self)
+        self.redirect(Login.path)
+        
+    def post(self):
+        self.get()
+    
         
         
                 

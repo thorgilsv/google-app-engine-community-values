@@ -22,18 +22,31 @@ class Member(db.Model):
     school = db.StringProperty()
     postcode = db.IntegerProperty()
     schoollvl = db.StringProperty()
-    date = db.DateTimeProperty(auto_now_add=True)
-  
-  
-class Group(db.Model):
+    date = db.DateTimeProperty(auto_now_add=True)    
+    
+class Assignments(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
     name = db.StringProperty()
-    mamber = db.ReferenceProperty(Member)
+    question = db.StringProperty()
     
-class GroupMember(db.Model):
+class AssignmentAnswer(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
-    group = db.ReferenceProperty(Group)
     member = db.ReferenceProperty(Member)
+    answer = db.StringProperty()
+    answer_number = db.IntegerProperty()
+    assignment = db.ReferenceProperty(Assignments)
+    
+ 
+  
+#class Group(db.Model):
+#    date = db.DateTimeProperty(auto_now_add=True)
+#    name = db.StringProperty()
+#    mamber = db.ReferenceProperty(Member)
+#    
+#class GroupMember(db.Model):
+#    date = db.DateTimeProperty(auto_now_add=True)
+#    group = db.ReferenceProperty(Group)
+#    member = db.ReferenceProperty(Member)
     
 class Session(db.Model):
     session_key = db.StringProperty()
