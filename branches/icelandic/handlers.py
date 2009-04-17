@@ -16,6 +16,11 @@ class CustomRequestHandler(webapp.RequestHandler):
     Extends Google App Engine's `webapp.RequestHandler` to add some form
     processing capabilities.
     """
+    
+    def set_cookie(self, key, value):
+        """Send an HTTP header that sets a user's cookie."""
+        self.response.headers['Set-Cookie'] = "%s=%s" % (key, value)
+        
     def render_to_response(self, template_name, context={}):
         """Render a template with request context common to all templates."""
         request_context = {
@@ -363,7 +368,6 @@ Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #T
 )
             
             self.render_to_response('email_sent.html', {'email': temporary_member.email })
-            #TODO: Do something with `self.clean_data`.
                         
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code').strip()
@@ -443,6 +447,13 @@ Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #T
             self.clean_data['gender'] = gender
         else:
             self.field_errors['gender'] = "Óþekkt snið á kyni."
+
+class CookieTest(CustomRequestHandler):
+    path = '/cookietest'
+    
+    def get(self):
+        self.set_cookie('test_cookie', 'SUCCESS')
+        #TODO: finish :)
 
 class Login(CustomRequestHandler):
     path = '/login'
