@@ -182,9 +182,9 @@ class Assignment(CustomRequestHandler):
         assignments = Assignments.gql("")
         return assignments.get()
         
-    def getAnswers(self,assignment): return AssignmentAnswer.gql("where assignment = :1 and member = :2", assignment, session.get_member(self))
+    def getAnswers(self,assignment): return AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", assignment, session.get_member(self))
     def getAnswer(self,assignment, number):
-        q = AssignmentAnswer.gql("where assignment = :1 and member = :2 and answer_number = :3", assignment, session.get_member(self), number)
+        q = AssignmentAnswer.gql("where assignment = :1 and member = :2 and answer_number = :3 ", assignment, session.get_member(self), number)
         return q.get()
     
     def updateUser(self,assignment):
@@ -288,7 +288,7 @@ class Answer(CustomRequestHandler):
     
     def getAnswers(self):
         member = session.get_member(self)
-        return AssignmentAnswer.gql("where assignment = :1 and member = :2", member.assignment, member)
+        return AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", member.assignment, member)
         
     def getAssignments(self): return Assignments.gql("order by date asc")
     
