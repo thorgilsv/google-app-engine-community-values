@@ -392,9 +392,7 @@ class Registration(CustomRequestHandler):
             temporary_member.age = self.clean_data['age']
             temporary_member.gender = self.clean_data['gender']
             temporary_member.activation_key = uuid.uuid4().hex
-            temporary_member.put()            
-            session.login(self, t)
-            self.redirect(Assignment.path)
+            temporary_member.put()                     
             
             # To reduce the likelyhood of being caught by some SPAM filters, add a name if not empty.
             if temporary_member.name:
