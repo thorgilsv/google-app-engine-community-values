@@ -1,5 +1,6 @@
 # coding: utf-8
 import re
+import uuid
 
 from google.appengine.ext import webapp
 from google.appengine.api import mail
@@ -8,6 +9,7 @@ import sha, random
 from database import *
 from django.contrib.sessions.models import Session
 import session
+import settings
 
 class CustomRequestHandler(webapp.RequestHandler):
     """
@@ -246,7 +248,47 @@ class Assignment(CustomRequestHandler):
                 'lvl': 'inner',
             })
 
+class Activation(CustomRequestHandler):
+    """Activate a user that has already signed up."""
+    path = "/activate"
     
+    def get(self):
+        activation_key = self.request.get('activation_key')
+        
+        # Some integrity assurance.
+        temporary_member = TempMember.gql('WHERE activation_key = :1', activation_key).get()
+        member = Member.gql('WHERE activation_key = :1', activation_key).get()
+        
+        if member:
+            self.render_to_response('activation.html', {
+                'member': member,
+                'error': "Þessi notandi er þegar til virkjaður í kerfinu okkar.",
+            })
+        elif temporary_member:
+            member = Member()
+            
+            member.password=temporary_member.password
+            member.email=temporary_member.email
+            member.age=temporary_member.age
+            member.gender=temporary_member.gender
+            member.school=temporary_member.school
+            member.postcode=temporary_member.postcode
+            member.schoollvl=temporary_member.schoollvl
+            member.date=temporary_member.date
+            
+            # TODO: make put and delete atomic for integrity
+            member.put()
+            temporary_member.delete()
+            
+            self.render_to_response('activation.html', {
+                'member': member,
+            })
+            
+        else:
+            self.render_to_response('activation.html', {
+                'error': "Þessi þessi staðfestingartengill er ekki virkur.  Vinsamlega reyndu nýskráningu að nýju.",
+            })
+        
 class Registration(CustomRequestHandler):
     """Register a group for it to be able to participate."""
     path = '/register'
@@ -265,7 +307,7 @@ class Registration(CustomRequestHandler):
                 'members': self.get_members(),                
             })
         
-    def get_members(self): return TempMember.gql("order by date desc")
+    def get_members(self): return Member.gql("order by date desc")
         
     def post(self):
         # Data that is ready to be inserted into the database.
@@ -286,47 +328,45 @@ class Registration(CustomRequestHandler):
                 'members': self.get_members(),
             })
         else:
-            # create activation key
-            password = self.request.get('password')
-            email = self.request.get('email')
-            age = self.request.get('age')       
-            postal_code = self.request.get('postal_code')
-            #salt = sha.new(str(random.random())).hexdigest()[:5]
-            #activation_key = sha.new(salt+password).hexdigest()
-
+                
             # insert into temp members table
 
-            t = Member()
-            t.name = self.request.get('name')
-            t.password = password
-            t.email = email            
-            if age.strip() != '' : t.age = int(age)
-            t.gender = self.request.get('gender')
-            #t.school = self.request.get('school')
-            if postal_code.strip() != '' : t.postcode = int(postal_code)
-            #t.schoollvl = self.request.get('class')
-            #t.activation_key = activation_key
-            t.put()            
+            temporary_member = TempMember()
+            temporary_member.name = self.clean_data['name']
+            temporary_member.password = self.clean_data['password']
+            temporary_member.email = self.clean_data['email']  
+            temporary_member.age = self.clean_data['age']
+            temporary_member.gender = self.clean_data['gender']
+            temporary_member.activation_key = uuid.uuid4().hex
+            temporary_member.put()            
+            
+            # To reduce the likelyhood of being caught by some SPAM filters, add a name if not empty.
+            if temporary_member.name:
+                to_line = "%s <%s>" % (temporary_member.name, temporary_member.email)
+            else:
+                to_line = temporary_member.email
+            
+            # end confirmation email and inform the user of this
+            mail.send_mail(sender="support@hugmyndaraduneytid.is",
+                    to=to_line,
+                    subject="Okkar framtíð: Staðfesting nýskráningar",
+                    body="""Kæri viðtakandi,
+                    
+Takk fyrir að skrá þig í verkefnið Okkar framtíð.  Þú getur tekið
+þátt í verkefninu með því að smella á tengilinn hér að neðan og
+staðfesta þar með netfangið þitt.
 
+http://%s/activate?activation_key=%s
+
+Takk fyrir þátttökuna,
+Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #TODO: improve writing
+)
             
-            # send confirmation email and inform the user of this
-            #mail.send_mail(sender="support@hugmyndaraduneytid.is",
-            #        to= tmpMember.email,
-            #        subject="Staðfesta nýskráningu",
-            #        body="""
-            #                            
-            #            Vinnsamlega fylgið meðfylgjandi hlekk til að virkja nýskráningu.
-            #        
-            #            Hugmyndaráðuneytið
-            #            """)
-            
-            #self.render_to_response('email_sent.html', {'email': email })
+            self.render_to_response('email_sent.html', {'email': temporary_member.email })
             #TODO: Do something with `self.clean_data`.
-            
-            self.redirect(Assignment.path)
-            
+                        
     def validate_postal_code(self):
-        postal_code = self.request.get('postal_code')
+        postal_code = self.request.get('postal_code').strip()
         
         valid_postal_codes = ('101', '102', '103', '104', '105', '107', '108',
         '109', '110', '111', '112', '113', '116', '121', '123', '124', '125',
@@ -345,13 +385,10 @@ class Registration(CustomRequestHandler):
         '840', '845', '850', '851', '860', '861', '870', '871', '880', '900',
         '902')
         
-        if postal_code in valid_postal_codes  or postal_code.strip() == '':
+        if not postal_code or postal_code in valid_postal_codes:
             self.clean_data['postal_code'] = postal_code
-        # postcode optional
-        #elif not postal_code:
-        #    self.field_errors['postal_code'] = "Póstnúmer vantar."
         else:
-            self.field_errors['postal_code'] = "Postnúmer er ekki rétt."
+            self.field_errors['postal_code'] = "Póstnúmer er ekki rétt."
             
     def validate_name(self):
         name_regex = re.compile("^[\.\w'\- ]*$", re.UNICODE) # Sr. Eðvald O'Brien Kaplan-Moss
@@ -367,7 +404,12 @@ class Registration(CustomRequestHandler):
         """Validate the e-mail address pattern and not whether it is active."""
         email = self.request.get('email')
         if mail.is_email_valid(email):
-            self.clean_data['email'] = email            
+            if Member.gql('WHERE email = :1', email).get():
+                self.field_errors['email'] = "Þetta netfang er þegar skráð í kerfið okkar."
+            elif TempMember.gql('WHERE email = :1', email).get():
+                self.field_errors['email'] = "Þetta netfang er skráð í kerfið okkar en hefur ekki verið virkjað.  Skoðaðu tölvupóstinn þinn og athugaðu hvort þér hefur borist staðfestingarpóstur."
+            else:
+                self.clean_data['email'] = email            
         else:
             self.field_errors['email'] = "Netfang er ekki rétt."
         
@@ -384,50 +426,29 @@ class Registration(CustomRequestHandler):
             self.field_errors['password'] = "Lykilorðin þurfa að vera eins."
             
     def validate_age(self):
-        age = self.request.get('age')
-        if age.isdigit() or age.strip() == '':
-            self.clean_data['age'] = age            
+        age = self.request.get('age').strip()
+        if not age:
+            self.clean_data['age'] = None
+        elif age.isdigit():
+            self.clean_data['age'] = int(age)
         else:
-            self.field_errors['age'] = "Aldur er ekki réttur"
+            self.field_errors['age'] = "Aldur er ekki réttur."
         
-    # gender is radio button and optional!    
-    #def validate_gender(self):
-    #    gender = self.request.get('gender')
-    #    
-    #    if gender:
-    #        if gender in ('kk', 'kvk'):
-    #            self.clean_data['gender'] = gender
-    #        else:
-    #            self.field_errors['gender'] = "Óþekkt snið á kyni."
-    #    else:
-    #        self.field_errors['gender'] = "Kyn vantar."
+    def validate_gender(self):
+        gender = self.request.get('gender', '')
         
-    #Not part of the initial setup at least
-    #def validate_school(self):
-    #    school = self.request.get('school')
-    #    self.clean_data['school'] = school
-    #    
-    #def validate_class(self):
-    #    klass = self.request.get('class')
-    #    
-    #    if klass == "empty":
-    #        self.field_errors['class'] = "Bekkur ekki valinn."
-    #    elif re.match("^([1-9]|10)\. bekkur$", klass):
-    #        self.clean_data['class'] = klass
-    #    else:
-    #        self.field_errors['class'] = "Óþekkt snið fyrir bekk."
-            
+        if not gender:
+            self.clean_data['gender'] = None
+        elif gender in ('kk', 'kvk'):
+            self.clean_data['gender'] = gender
+        else:
+            self.field_errors['gender'] = "Óþekkt snið á kyni."
+
 class Login(CustomRequestHandler):
     path = '/login'
     
     def get(self):
-        # TODO: checks
-        #  1. does the user support cookies?
-        #     - yes: continue
-        #     - no: warn user, provide instructions
-        #  2. is the user already logged in?
-        #     - yes: redirect to post-logout page
-        #     - no: display form
+        # TODO: do cookie support check
         
         self.render_to_response('login.html',{
             'show_info_links': True,
@@ -459,53 +480,3 @@ class Logout(CustomRequestHandler):
         
     def post(self):
         self.get()
-    
-        
-        
-                
-#class Groups(CustomRequestHandler):
-#    path = '/groups'
-#    
-#    def get_Groups(self): return Group.gql("ORDER BY date DESC")
-#    
-#    def get(self):
-#        # TODO: checks
-#        #  1. does the user support cookies?
-#        #     - yes: continue
-#        #     - no: warn user, provide instructions
-#        #  2. is the user already logged in?
-#        #     - yes: redirect to post-logout page
-#        #     - no: display form
-#        
-#        self.response.out.write(render_template('groups.html',{
-#            'groups': self.get_Groups(),
-#        }))
-#        
-#    def add_group(self):
-#        group = Group()
-#        group.name = self.request.get('name')
-#        group.email = self.request.get('email')
-#        group.put()
-#        groupMember = GroupMember()
-#        group.name = self.request.get('name')
-#        group.put()
-#        
-#    def remove_member(self, email):
-#        q = Group.gql("Where email = :1", email)
-#        results = q.fetch(1)
-#        Group.delete(results)
-#        
-#    def add_member(self, email):
-#        groupMember = GroupMember()
-#        group.name = self.request.get('name')
-#        group.put()
-#
-#    def post(self):
-#        if ( self.request.get('add_member') ): self.add_member()
-#        if ( self.request.get('remove_member') ) : self.remove_member()
-#        if ( self.request.get('add_group') )  : self.add_group()   
-#        
-#        self.redirect('/groups')
-        
-    
-        
