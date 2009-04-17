@@ -142,12 +142,14 @@ class Assignment(CustomRequestHandler):
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
     def addAnswer(self, value, count, assignment):
-        t = AssignmentAnswer()
+        a = self.getAnswer(assignment,count)
+        if not a: t = AssignmentAnswer()
+        else: t=a
         t.member = session.get_member(self) 
         t.answer = value
         t.answer_number = count
         t.assignment = assignment
-        t.put()
+        db.put(t)
         
     def deleteAssignments(self):        
         q = db.GqlQuery("SELECT * FROM Assignments")
@@ -181,6 +183,9 @@ class Assignment(CustomRequestHandler):
         return assignments.get()
         
     def getAnswers(self,assignment): return AssignmentAnswer.gql("where assignment = :1 and member = :2", assignment, session.get_member(self))
+    def getAnswer(self,assignment, number):
+        q = AssignmentAnswer.gql("where assignment = :1 and member = :2 and answer_number = :3", assignment, session.get_member(self), number)
+        return q.get()
     
     def updateUser(self,assignment):
         member = session.get_member(self)
