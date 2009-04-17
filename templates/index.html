@@ -4,10 +4,10 @@
     
 <ul class="navigation" id="list-menu"> 
 	<li><a href="/about">Um verkefnið</a></li>	
-	<li><a href="/teachers-guide">Til kennara</a></li>
+	<li><a href="/information">Til kennara</a></li>
 	{% if user %}                                  
     {% for each in assignments %}
-    <li><a href="/assignment?var={{each.name}}">vv{{each.name}}</a> </li>
+    <li><a href="/assignment?var={{each.name}}">{{each.name}}</a> </li>
      
     {% endfor %}
     {% else %}
