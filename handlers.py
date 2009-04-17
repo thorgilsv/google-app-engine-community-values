@@ -170,7 +170,7 @@ class Assignment(CustomRequestHandler):
         t.question = 'Spurning3?'   
         t.put()        
         
-    def getAssignments(self): return Assignments.gql("")
+    def getAssignments(self): return Assignments.gql("order by date asc")
     
     def getAssignment(self,name):
         assignments = Assignments.gql("where name = :1",name)
@@ -213,6 +213,7 @@ class Assignment(CustomRequestHandler):
             'min_values': 5,
             'assignments': self.getAssignments(),
             'assignment': assignment,
+            'user': session.get_member(self)
         })
         
     def post(self):
@@ -278,7 +279,7 @@ class Assignment(CustomRequestHandler):
             self.render_to_response('assignment.html', {
                 'field_values': field_values,
                 'min_values': 5,
-                'member': member,
+                'user': session.get_member(self)
             })
 
 
@@ -289,7 +290,7 @@ class Answer(CustomRequestHandler):
         member = session.get_member(self)
         return AssignmentAnswer.gql("where assignment = :1 and member = :2", member.assignment, member)
         
-    def getAssignments(self): return Assignments.gql("")
+    def getAssignments(self): return Assignments.gql("order by date asc")
     
     def get(self):
         self.require_login()
@@ -298,7 +299,7 @@ class Answer(CustomRequestHandler):
             'assignments': self.getAssignments(),
             'answers': self.getAnswers(),
             'assignment': member.assignment.name,
-            'member': member,
+            'user': session.get_member(self)
             }))
 
 
@@ -379,7 +380,7 @@ class Registration(CustomRequestHandler):
             self.render_to_response('registration.html', {
                 'errors': self.field_errors,
                 'previous': self.request.POST,
-                'members': self.get_members(),
+                'user': session.get_member(self)
             })
         else:
                 
