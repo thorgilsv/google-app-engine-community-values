@@ -30,10 +30,15 @@ html { background:#1fc4f4; }
  
 #content {
 	background: #fff;
-	background:url(../img/jpg/framtid_08b.jpg);
-	background-repeat: repeat-y;
 	padding:10px;
     width: 387px;
+	float: right;
+}
+
+#content-projects {
+	background: #fff;
+	padding:10px;
+    width: 694px;
 	float: right;
 }
 

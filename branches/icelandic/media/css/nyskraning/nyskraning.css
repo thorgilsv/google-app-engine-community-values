@@ -1,0 +1,121 @@
+.reqnote {
+  font-size: .92em;
+  color: #666;
+}
+
+
+.fi_txt,
+.fi_sel {
+  _height:0;~min-height:0; /* ie hasLayout fix */
+  padding-bottom: .5em;
+}
+.fi_txt:after,
+.fi_sel:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
+
+select,
+.fi_txt input {
+  font-size: 1em;
+  background: #fff;
+  border: 1px solid #fcd39f;
+}
+select:focus,
+.fi_txt input:focus {
+  border-color: #faa73d;
+}
+
+
+.fi_txt input {
+  width: 300px
+}
+
+
+label,
+fieldset h3 {
+  float: left;
+  width: 8.7em;
+  margin-right: .7em;
+  color: #666;
+}
+acronym.req {
+  color: #c00;
+  font-weight: bold;
+  border: none;
+  padding: 0 3px;
+  cursor: help;
+}
+h3 acronym.req,
+label acronym.req {
+  float: right;
+  margin: .2em -.7em -.2em -.7em;
+}
+
+
+
+fieldset.agegender {
+  border: none;
+  padding: 0;
+  margin: 0 0 .5em 0;
+  position: relative;
+  _height:0;~min-height:0; /* ie hasLayout fix */
+}
+.agegender h3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  font-size: 1em;
+  font-weight: normal;
+  width: 7em;
+}
+.agegender ol {
+  float: left;
+  color: #999;
+  padding: 0;
+  margin: 0 0 0 9.4em;
+  _margin-left: 4.7em;
+}
+.agegender li {
+  clear: both;
+  padding-bottom: .3em;
+}
+
+.agegender label {
+  float: none;
+  width: auto;
+  margin-right: 5px;
+}
+
+.agegender .fi_txt,
+.agegender .fi_sel {
+  margin-right: 1.5em;
+}
+.agegender .fi_txt:after,
+.agegender .fi_sel:after { display: inline; content:""; }
+.agegender .fi_txt input {
+  width: 2.5em;
+}
+
+
+
+.schoolinfo {
+  margin: .7em 0;
+}
+
+
+.fi_btn {
+  padding: 1em 0 0 0;
+  text-align: right;
+}
+.fi_btn input {
+  background: transparent none;
+  border: none;
+  font-size: 1.25em;
+  font-weight: bold;
+  color: #fba53e;
+  padding: 2px 5px;
+}
+.fi_btn input:hover,
+.fi_btn input:focus {
+  color: #c70;
+  background-color: #dcedf4;
+}
