@@ -135,23 +135,26 @@ class Assignment(CustomRequestHandler):
     
     def get_default_tuple(self, number):
         #TODO: change from tuple to class for dramatically increased readability
-        return (number, '', '50', '50', '50', '')
+        return (number, '', '3', '3', '3', '')
     
     def get_field_list(self, count, from_number=0):
         """Return a tuple of default values."""
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
     def addAnswer(self, value, count, assignment):
-
         a = self.getAnswer(assignment,count)
         if not a: t = AssignmentAnswer()
         else: t=a
-        t.member = session.get_member(self) 
-        t.answer = value
+        t.member = session.get_member(self)
+        t.statement = value[1]
+        t.current_state = value[2]
+        t.headed_state = value[3]
+        t.ideal_state = value[4]
+        t.comment = value[5]
         t.answer_number = count
         t.assignment = assignment
-        db.put(t)
-        
+        t.put()
+                
     def get_answers(self):
         Assignment.gql("WHERE assignment = :1 AND member = :2", self.get_current_assignment(), session.get_member(self))
         
@@ -186,7 +189,9 @@ class Assignment(CustomRequestHandler):
         assignments = Assignments.gql("")
         return assignments.get()
         
-    def getAnswers(self,assignment): return AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", assignment, session.get_member(self))
+    def getAnswers(self,assignment):
+        return AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", assignment, session.get_member(self))
+    
     def getAnswer(self,assignment, number):
         q = AssignmentAnswer.gql("where assignment = :1 and member = :2 and answer_number = :3 ", assignment, session.get_member(self), number)
         return q.get()
@@ -199,18 +204,29 @@ class Assignment(CustomRequestHandler):
         member.assignment = assignment
         member.put()
         
+    def get_answer_tuples(self, assignment):
+        answers = self.getAnswers(assignment)
+        
+        tuple_list = []
+        
+        for answer in answers:
+            tuple_list.add((answer.answer_number,answer.statement,answer.current_state,answer.headed_state,answer.ideal_state,answer.comment))
+        
+        return tuple_list
+        
     def get(self):
         self.require_login()
         assignment_name = self.request.get('var')
-        if assignment_name: assignment = self.getAssignment(assignment_name)
-        else : assignment = self.getDefaultAssignment()
-
+        if assignment_name:
+            assignment = self.getAssignment(assignment_name)
+        else:
+            assignment = self.getDefaultAssignment()
+            
         self.updateUser(assignment)
         
         #TODO fill inn stored answers
         answers = self.getAnswers(assignment)
-        field_values = self.get_field_list(self.field_count)
-
+        field_values = self.get_current_assignment()
         
         self.render_to_response('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
@@ -269,7 +285,7 @@ class Assignment(CustomRequestHandler):
             #print value
             if value == None: break
             count+=1
-            self.addAnswer(value[1], count, member.assignment)
+            self.addAnswer(value, count, member.assignment)
         
         has_enough_data = non_empty_field_count >= self.mandatory_field_count
         
@@ -278,7 +294,7 @@ class Assignment(CustomRequestHandler):
             #redirect to show answers
             self.redirect(Answer.path)
             
-        elif self.request.get('quit') :
+        elif self.request.get('foobar') :
             #the user is logging of for now
             self.redirect(Logout.path)
         else:
@@ -366,9 +382,12 @@ class Registration(CustomRequestHandler):
         self.run_prefixed_methods('validate_', *args, **kwargs)
         
     def get(self):
-        self.render_to_response('registration.html', {
-                'members': self.get_members(),                
-            })
+        if session.get_member(self):
+            self.redirect(Assignment.path)
+        else:
+            self.render_to_response('registration.html', {
+                    'members': self.get_members(),                
+                })
         
     def get_members(self): return Member.gql("order by date desc")
         

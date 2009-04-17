@@ -35,7 +35,11 @@ class Particpant(db.Model):
 class AssignmentAnswer(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
     member = db.ReferenceProperty(Member)
-    answer = db.StringProperty()
+    statement = db.StringProperty()
+    current_state = db.StringProperty()
+    headed_state = db.StringProperty()
+    ideal_state = db.StringProperty()
+    comment = db.StringProperty()
     answer_number = db.IntegerProperty()
     assignment = db.ReferenceProperty(Assignments)
     
