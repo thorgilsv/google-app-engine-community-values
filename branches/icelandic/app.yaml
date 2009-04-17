@@ -8,3 +8,4 @@ handlers:
   static_dir: media
 - url: /.*
   script: main.py
+
