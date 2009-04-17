@@ -55,8 +55,8 @@ html { background:#1fc4f4; }
 	margin-left:auto;
 	margin-right:auto;
 	background:#fff;
-	height: 56px;
 	border-bottom:3px solid #999;
+	height: 49px;
 }
 
 #footer {
@@ -75,6 +75,10 @@ html { background:#1fc4f4; }
 
 input {
 	border:1px solid #f90;
+}
+
+a img {
+    border: none;
 }
 
 ul {

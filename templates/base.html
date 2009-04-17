@@ -10,6 +10,7 @@
 
   
     </head>
+    
     <body class="body">
          <div id="sign-in">
                 <form action="/login" method="post">
@@ -45,9 +46,9 @@
 				  
 			</div>
 			<div id="main">
-			<div id="header">
-				
-			</div>
+			    
+			{% block header %}{% endblock %}
+            
 			
             {% block sidebar %}{% endblock %}
             

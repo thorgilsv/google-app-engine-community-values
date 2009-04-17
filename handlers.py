@@ -147,9 +147,9 @@ class Assignment(CustomRequestHandler):
         else: t=a
         t.member = session.get_member(self)
         t.statement = value[1]
-        t.current_state = value[2]
-        t.headed_state = value[3]
-        t.ideal_state = value[4]
+        t.current_state = int(value[2])
+        t.headed_state = int(value[3])
+        t.ideal_state = int(value[4])
         t.comment = value[5]
         t.answer_number = value[0]
         t.assignment = assignment
@@ -166,16 +166,12 @@ class Assignment(CustomRequestHandler):
     def createAssignments(self):
         t = Assignments()
         t.name = 'Verkefni 1'
-        t.question = "Spurning1?" 
+        t.question = "O hai 1." 
         t.put()
         t = Assignments()
         t.name = 'Verkefni 2'
-        t.question = 'Spurning2?'        
-        t.put()
-        t = Assignments()
-        t.name = 'Verkefni 3'
-        t.question = 'Spurning3?'   
-        t.put()        
+        t.question = 'O hai 2.'        
+        t.put()   
         
     def getAssignments(self): return Assignments.gql("order by name asc")
     
@@ -235,6 +231,7 @@ class Assignment(CustomRequestHandler):
                         
         self.render_to_response('assignment.html', {
             'field_values': field_values,
+            'choice_names': ('Slæm','Slöpp','Þokkaleg','Ágæt','Fín'),
             'min_values': 5,
             'assignments': self.getAssignments(),
             'assignment': assignment,
@@ -311,13 +308,7 @@ class Assignment(CustomRequestHandler):
             #the user is logging of for now
             self.redirect(Logout.path)
         else:
-            field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count+1)
-            
-            self.render_to_response('assignment.html', {
-                'field_values': field_values,
-                'min_values': 5,
-                'user': session.get_member(self)
-            })
+            self.get()
 
 
 class Answer(CustomRequestHandler):

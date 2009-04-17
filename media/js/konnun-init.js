@@ -123,14 +123,15 @@ jQuery(function($){
   $('.eval select', wordCont)
       .hide()
       .each(function(i){
-          var selElm = this,
+          var selElm = $(this),
               maxVal = $('option[value]', selElm).length,
               minVal = 1,
-              startVal = Math.ceil( (maxVal+minVal)/2 ),
-              changeHandler = function(e, ui){
-                  $(selElm).val( ui.value );
+              startVal = selElm.val() || Math.ceil( (maxVal+minVal)/2 ),
+              changeHandler = function (e, ui) {
+                  selElm.val( ui.value );
                   valElm.text( $('option[selected]', selElm).text() );
                 };
+          ;;;window.console&&console.log( selElm.val(),  startVal );
           var valElm  = $('<span class="value" />').insertAfter( selElm )
           $('<span />')
               .slider({
