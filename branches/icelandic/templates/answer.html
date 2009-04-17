@@ -11,7 +11,11 @@ Hér eru niðurstöðurnar þínar úr {{assignment}}:
 {% for answer in answers %}
     <div class="field">    
     {{answer.answer_number}},
-    {{answer.answer}},
+    {{answer.statement}},
+    {{answer.current_state}},
+    {{answer.headed_state}},
+    {{answer.ideal_state}},
+    {{answer.comment}},
     </div>
 {% endfor %}
 
