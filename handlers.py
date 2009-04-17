@@ -248,7 +248,7 @@ class Assignment(CustomRequestHandler):
         field_values = []
                 
         # Fill `field_values` with values of non-empty fields.
-        for number in range(1, self.field_count+1):
+        for number in range(self.field_count):
             prefixes = ('value', 'current_state', 'headed_state', 'ideal_state', 'comment')
             fields_tuple = tuple()
             
@@ -274,7 +274,7 @@ class Assignment(CustomRequestHandler):
                 continue
             else:
                 # If all fields are present, put it in the list of tuples.
-                field_values.append((len(field_values),) + fields_tuple)
+                field_values.append((len(field_values)+1,) + fields_tuple)
         
         non_empty_field_count = len(field_values)
         
