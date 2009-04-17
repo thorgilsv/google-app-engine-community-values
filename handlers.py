@@ -411,7 +411,7 @@ class Registration(CustomRequestHandler):
                             Lykilorð þitt er '%s'
                             
                             Takk fyrir þátttökuna,
-                            Hugmyndaráðuneytið""" % member.password.__str__()
+                            Hugmyndaráðuneytið""" % member.password.__unicode__()
                         )       
         
         
