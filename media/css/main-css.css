@@ -1,0 +1,391 @@
+.wrap {
+	width:760px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom:0px;
+	padding:0px; 
+	text-align:left;
+	background-color:#fff; 
+	}
+
+#print-identity {
+	display:none;
+}
+
+#quote {
+	font-family:arial;
+	font-size:160%; 
+	color:#008;
+	margin-bottom:0px
+}
+
+.header-controls {
+	float:right;
+	text-align:right;
+	width:400px;
+}
+
+.menu {
+	border-width: 1px 0px 1px 1px;
+	border-style:solid;
+	border-color: #fff;
+}
+
+.menu-select {
+	border-width: 1px 0px 1px 1px;
+	border-style:solid;
+	border-color: #ccc;
+}
+
+.list-menu a:link {
+	display: block;
+	width:150px;
+	border-width: 1px 0px 1px 1px;
+	border-style:solid;
+	border-color: #fff;
+	color:#000;
+	text-decoration: none;
+} 
+
+.list-menu a:visited {
+	display: block;
+	width:150px;
+	border-width: 1px 0px 1px 1px;
+	border-style:solid;
+	border-color: #fff;
+	color:#000;
+	text-decoration: none;
+} 
+
+.list-menu a:active {
+	display: block;
+	width:150px;
+	border-width: 1px 0px 1px 1px;
+	border-style:solid;
+	border-color: #fff;
+	color:#000;
+	text-decoration: none;
+} 
+
+.list-menu a:hover {
+	display: block;
+	background-color:#f2f2f9;
+	width:150px;
+	border-width: 1px 0px 1px 1px;
+	border-style:solid;
+	border-color: #ccc;
+	color:#000;
+	text-decoration: none;
+} 
+
+p {
+	margin-top:0px;
+}
+
+.first-paragraph:first-letter {
+	font-size: x-large;
+	font-weight:normal;
+	float:left
+}
+
+ul {
+margin: 0px; 
+padding: 0px;
+list-style-type: none;
+} 
+
+.list-menu {
+	width:150px;
+	height:100%;
+	float:left; 
+}
+
+li.alpha {
+	list-style-type: lower-alpha;
+}
+
+.body {
+	background-color:#fff;
+	background:url(../img/jpg/bgr-grad-blue.jpg);
+	background-repeat: repeat-x;
+	text-align:center;
+	font-family:verdana,tahoma,helvetica,arial;
+	font-size:100%;
+	color: black;
+}
+
+.origin { 
+    display: block; 
+    background: #795089; 
+    padding: 1ex; 
+    color: #fff; 
+    text-align: right; 
+    margin-bottom: 1em; 
+} 
+.markup { 
+    padding: 1em 0; 
+    border-bottom: 1px solid #ccc; 
+} 
+.hide { 
+    display: none; 
+} 
+.report { 
+    border: 1px solid #333; 
+    padding: .25ex 1ex; 
+} 
+.bg { 
+    position: relative; 
+    background: url(http://developer.yahoo.com/yui/examples/slider/assets/bg-h.gif) no-repeat 5px -3px; 
+    width: 227px; 
+    height: 21px; 
+    margin-bottom: 1em; 
+} 
+.t { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+}
+
+.advertisement {
+	font-size:100%;
+	color:#666;
+	background-color:#f2f2f9;
+	padding:5px;
+	border-top:1px solid #ccc;
+	border-right:1px solid #ccc;
+	border-bottom:1px solid #ccc
+}
+
+.logo {
+	width:200px;
+	padding:0px
+}
+
+.square-decoration {
+	background-color:red;
+	color:red;
+	border:1px solid #fff
+}
+
+#search-results {
+	background-color:#f2f2f9; 
+	padding:5px;
+	border:1px solid #ccc
+}
+
+.separator {
+	height:15px;
+	background-color:transparent
+}
+
+.select-top-menu {
+	width:200px;
+	font-size:100%
+}
+
+.wrapper-main-column-right {
+	width:608px;
+	min-height:400px;
+	float:right;
+	border-left:1px solid #ccc;
+}
+
+/* Border Hack Targets IE Win 6 and older only \*/
+* html .wrapper-main-column-right {
+	width:578px;
+	height:400px;
+	float:right;
+	border-left:1px solid #ccc;
+}
+/* Border Hack */
+
+.main-column-right-margin {
+	margin-left:5px;
+	padding-top:10px;
+}
+
+.subject-margin {
+	margin:5px 0px 0px 5px;
+}
+
+.page-title {
+	font-size:200%;
+	font-weight:normal;
+	margin:0px;
+	padding:5px 0px 3px 3px;
+	border-top:1px solid #ccc;
+	border-bottom:3px solid #f00;
+}
+
+.heading-2 {
+	font-size: 150%;
+	font-family: verdana;
+	margin:0px;
+	padding:5px;
+	border-top:3px solid #f00;
+	color: black;
+	font-weight:normal
+}
+
+#footer {
+	color:#666;
+}
+
+.subheader {
+	font-size:120%;
+	margin:0px;
+	padding:0px;
+}
+
+#subheading-home {
+	font-size: 150%;
+	margin:0px;
+	margin-bottom:5px;
+	padding:5px;
+	border-bottom:3px solid #f00;
+	color: black;
+	font-weight:normal
+}
+
+.show-hide {
+	font-size:70%;
+	color:#999;
+	cursor:hand;
+}
+
+table {
+	border-collapse:collapse;
+	font-size:100%;
+}
+
+td {
+	vertical-align: top;
+	padding-left: 5px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #ccc;
+}
+
+.tr {
+	border-left: 1px solid #ccc;
+}
+
+.go-to-top {
+	text-align:right;
+}
+
+th {
+	text-align:left;
+	font-weight:normal;
+	border-bottom: 1px solid #ccc;
+}
+
+.button {
+	background-color:#f2f2f9;
+	border:1px solid #ccc;
+	margin:3px 0px 3px 3px;
+	padding:0px;
+	font-size:100%;
+	cursor:hand;
+}
+
+.input {
+	background-color:#f2f2f9;
+	position:relative;
+	top:-3px;
+	border:1px solid #ccc;
+	font-size:100%
+}
+
+.control-bar {
+	background-color:#fff;
+	border-bottom:1px solid #ccc;
+	text-align:right;
+}
+
+.search-engine {
+	background-color:#f2f2f9;
+	position:relative;float:right;
+	padding:5px 5px 5px 5px;
+	margin: 0px 0px 5px 5px;
+	border-left:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+.incidence-list-left {
+	width:300px; 
+	float:left;
+}
+
+.incidence-list-right {
+	width:300px; 
+	float:right;
+}
+
+/* Float Hack Targets IE Win only \*/
+* html .incidence-list-left {
+	width:285px; 
+	float:left;
+}
+
+/* Float Hack Targets IE Win only \*/
+* html .incidence-list-right {
+	width:285px; 
+	float:right;
+}
+
+a {
+	text-decoration:none;
+}
+
+a:link {
+	color:#390;
+}
+
+a:visited {
+	color:#390;
+	text-decoration:underline;
+}
+
+a:active {
+	color:#390
+}
+
+a:hover {
+	background-color:#f00;
+	color:#fff;
+}
+
+ol {
+	margin-top:0px;margin-bottom:0px;
+}
+
+dl {
+	margin:0px;
+}
+
+dd {
+	margin-left:10px;
+	margin-bottom:5px;
+}
+
+dt {
+	font-weight:bold;
+}
+
+.clearfix:after {
+content: "."; 
+display: block; 
+height: 0; 
+clear: both; 
+visibility: hidden;
+}
+  
+.clearfix {
+display: inline-block;
+}  
+ 
+/* Holly Hack Targets IE Win only \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End Holly Hack */

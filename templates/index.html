@@ -1,20 +1,126 @@
 {% extends "base.html" %}
+{% block sidebar %}
+<div id="sidebar">
+    
+<ul class="navigation" id="list-menu"> 
+	<li><a href="/about">Um verkefnið</a></li> 
+	<li><a href="/teachers-guide">Til kennara</a></li>
+	{% if user %}                                  
+    {% for assignment in assignments %}
+    <li><a href="/assignment?var={{assignment.name}}">{{assignment.name}}</a> </li>
+    {% endfor %}
+    {% endif %}
+    
+</ul>
+<div id="" style="padding:10px">
+	<p> 
+	<span style="font-size:120%;color:#FF9900;font-weight:bold">Kæra þjóð!</span>
+</p> 
+<p>
+	Við þurfum að finna ný markmið, góð markmið, klók markmið sem
+    skapa sanna og varanlega hagsæld. Þörf er á að tvinna saman
+    þann sköpunarmátt sem í okkur býr, flétta haldreipi, setja upp
+    sterkan vef, kveikja nýja von og trú á gott mannfélag í sátt
+    við land og lífheim.
+</p>
+<p>
+	Gæðin sem við njótum í dag eru fyrirhyggju eldri kynslóða að
+    þakka: Heita og kalda vatnið, rafmagnið, sjúkrahúsin,
+    skólakerfið og hinar ýmsu samfélagsstofnanir. Það góða líf sem
+    við höfum lifað fram að þessu er forsjálni þeirra að þakka.
+</p>
+<p>
+	Og nú er komið að okkur. Hvaða land viljum við byggja börnum
+    okkar og afkomendum? Hvernig Ísland viljum við - hver er
+    framtíðarsýn okkar?
+</p>
+<p>	
+	Við þurfum að hugsa saman, vinna saman, og ná árangri saman.
+</p>
+<p>
+	Ég hvet ykkur því til að taka þátt í átakinu Framtíðarsýn
+    þjóðar.
+</p>
+<p>
+	Verkefninu er ætlað að gefa þjóðinni allri, ungum sem öldnum,
+    tækifæri til að koma skoðun sinni á framfæri á þessum
+    skeiðskiptum.
+</p>
+<p>
+	Með vinsemd og virðingu,</p>
+
+<p>
+	Vigdís Finnbogadóttir
+</p>
+</div>
+
+
+</div>
+{% endblock %}
 {% block content %}
+<h2>Nýskráning</h2>
+
 <p>
-    Takk fyrir að taka þátt.
+    Hvort sem verið er að skrá einn notanda eða marga notendur er það mjög
+    einfalt. Fyllið út reitina hér fyrir neðan og ef ykkur vantar nánari
+    upplýsingar þá er hnappur með spurningamerki við hvern lið sem hægt er að
+    smella á og fá frekari upplýsingar.
 </p>
-<p>
-    Til að byrja verkefnið þarf að skrá þátttakanda eða þátttakendur og er það
-    gert með því að smella á <strong>Nýskráning</strong> hér til hægri. Sé
-    hins vegar búið að skrá nýjan notanda eða notendur er ýtt á
-    <strong>Innskráning</strong>.
-</p>
-<p>
-    Verkefnið sjálft er mjög einfalt en við vonuma ð þið takið ykkur góðan
-    tíma til að velta fyrir ykkur möguleikunum. Skemmtilegast er þegar tveir
-    eða fleiri taka þátt saman.
-</p>
-<p>
-    ...
-</p>
+
+<form method="post">
+
+    <div class="field">
+        {{ errors.name }}
+        <label>Nafn</label>
+        <input type="text" name="name" value="{{ previous.name }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.postal_code }}
+        <label>Póstnúmer</label>
+        <input type="text" name="postal_code" value="{{ previous.postal_code }}" />
+    </div>
+
+    {# This is for the sole purpose of populating the .participant_list. #}
+    {# No attempt is made by the Registration class to verify this field. #}
+    <div class="field">
+        <label>Fjöldi þáttakenda</label>
+        <input type="text" name="participant_count" />
+    </div>
+
+    {# TODO We need this to be with respect to number of participants. #}
+    <div class="field">
+
+    {% for each in participants %}        
+        <div class="field">
+        {{ errors.age }}
+            Aldur <input type="text" name="age" value="{{ previous.age }}"/>
+            <input type="radio" name="gender" value="kk" />kk
+            <input type="radio" name="gender" value="kvk" />kvk
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="field">
+        {{ errors.email }}
+        <label>Netfang*</label>
+        <input type="text" name="email" value="{{ previous.email }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.password }}
+        <label>Lykilorð*</label>
+        <input type="password" name="password" value="{{ previous.password }}" />
+    </div>
+
+    <div class="field">
+        {{ errors.password_confirm }}
+        <label>Lykilorð aftur*</label>
+        <input type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
+    </div>
+
+    <div class="field">
+        <input type="submit" name="register" value="Nýskrá"/>
+    </div>
+</form>
 {% endblock %}

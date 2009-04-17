@@ -65,12 +65,6 @@ class CustomRequestHandler(webapp.RequestHandler):
         validate_methods = [method for method in dir(self) if method.startswith(prefix)]
         for method in validate_methods:
             validate_result = getattr(self, method)(*args, **kwargs)
-
-class MainPage(CustomRequestHandler):
-    path = '/'
-    
-    def get(self):
-        self.render_to_response('index.html', {'show_info_links': True})
         
 class About(CustomRequestHandler):
     path = '/about'
@@ -296,7 +290,7 @@ class Activation(CustomRequestHandler):
         
 class Registration(CustomRequestHandler):
     """Register a group for it to be able to participate."""
-    path = '/register'
+    path = '/'
     
     def run_validation_methods(self, *args, **kwargs):
         """
@@ -427,7 +421,7 @@ Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #T
         elif password_confirm == password:
             self.clean_data['password'] = password
         else:
-            self.field_errors['password'] = "Lykilorðin þurfa að vera eins."
+            self.field_errors['password_confirm'] = "Lykilorðin þurfa að vera eins."
             
     def validate_age(self):
         age = self.request.get('age').strip()

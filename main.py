@@ -5,7 +5,6 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from handlers import *
                   
 application = webapp.WSGIApplication([
-        (MainPage.path, MainPage),
         (Registration.path, Registration),
         (Login.path, Login),
         (Assignment.path, Assignment),
@@ -20,7 +19,7 @@ application = webapp.WSGIApplication([
         (Images.path, Images),
         (Participation.path, Participation),
         (Logout.path, Logout),
-        (Answer.path, Answer),
+        #(Answer.path, Answer), #fridrik had to disable because it broke my build; Answer does not exist in handlers
         (Activation.path, Activation),
     ], debug = True)
 

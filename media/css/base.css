@@ -1,32 +1,116 @@
 /* fix me! :) */
+html { background:#1fc4f4; }
+
+.body {
+	margin: 0px;
+	padding: 0px;
+	background-color: #1fc4f4;
+	background:url(../img/gif/framtid-bgr_02.gif);
+	background-repeat: no-repeat;
+	background-position:50% 0%; 
+	font-family:verdana,tahoma,helvetica,arial;
+	font-size:78%;
+	color: #333;
+}
 
 #main {
-    /*width: 720px;
-    height: 520px;
-    margin-top: 85px;
-    margin: auto;*/
-    
-    margin: 0 auto;
-    padding: 20px;
-    text-align: left;
-    background-color: #fff;
     width: 720px;
+    margin: 0 auto;
 }
-
-#main #content {
-    background: #E0EAF8;
-}
-
+ 
 #sidebar {
-    width: 200px;
-    height: 520px;
-    background: #DDFED1;
+	background:#fff;
+	border-left:3px solid #999;
+	width: 307px;
+	background: #fff;
+	float: left;
+}
+ 
+#content {
+	background: #fff;
+	background:url(../img/jpg/framtid_08b.jpg);
+	background-repeat: repeat-y;
+	border-right:3px solid #999;
+	padding:10px;
+    width: 387px;
+	float: right;
 }
 
-#content {
-    
-    width: 520px;
-    height: 520px;
-    margin-top: -540px;
-    margin-left: 200px;
+#sign-in {
+	height: 85px;
+	margin-left:auto;
+	margin-right:auto;
+	background:none;
+	text-align: right;
+}
+
+#header {
+	margin-left:auto;
+	margin-right:auto;
+	background:#fff;
+	height: 56px;
+	border:3px solid #999;
+}
+
+#footer {
+	background:#fff;
+	clear:both;
+	border-left:3px solid #999;
+	border-right:3px solid #999;
+	border-bottom:3px solid #999;
+	
+}
+
+#sign-in a   {
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+td {
+    vertical-align: top;
+}
+
+td.field.errors {
+    border: 2px solid red;
+}
+
+span.errors {
+    display: block;
+}
+
+ul {
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+} 
+
+li {
+	
+	padding: 0px;
+	
+}
+
+.navigation a {
+	display: block;
+	padding: 5px;
+	text-decoration:none;
+	border-bottom: 1px solid #ddd;
+	width:307px;
+	background: #f5f5f5;
+	color:#666;
+}
+
+.navigation a:visited {
+	color:#666;
+	text-decoration:underline;
+}
+
+.navigation a:active {
+	color:#666
+}
+
+.navigation a:hover {
+	color:#f63;
+	background: #e1e1e1;
 }
