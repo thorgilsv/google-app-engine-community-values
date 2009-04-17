@@ -15,28 +15,30 @@ html { background:#1fc4f4; }
 
 #main {
     width: 720px;
+	background:white;
     margin: 0 auto;
+	border:3px solid #999;
 }
  
 #sidebar {
 	background:#fff;
-	border-left:3px solid #999;
 	width: 307px;
 	background: #fff;
 	float: left;
+	border-right:3px solid #999;
 }
  
 #content {
 	background: #fff;
 	background:url(../img/jpg/framtid_08b.jpg);
 	background-repeat: repeat-y;
-	border-right:3px solid #999;
 	padding:10px;
     width: 387px;
 	float: right;
 }
 
 #sign-in {
+	width:720px;
 	height: 85px;
 	margin-left:auto;
 	margin-right:auto;
@@ -49,34 +51,25 @@ html { background:#1fc4f4; }
 	margin-right:auto;
 	background:#fff;
 	height: 56px;
-	border:3px solid #999;
+	border-bottom:3px solid #999;
 }
 
 #footer {
 	background:#fff;
 	clear:both;
-	border-left:3px solid #999;
-	border-right:3px solid #999;
-	border-bottom:3px solid #999;
 	
 }
 
-#sign-in a   {
-    color: white;
-    text-decoration: none;
-    font-weight: normal;
+#drop-shadow-footer {
+	width:720px;
+	height:8px;
+	background:#666;
+	margin:0px auto;
+	left:10px;
 }
 
-td {
-    vertical-align: top;
-}
-
-td.field.errors {
-    border: 2px solid red;
-}
-
-span.errors {
-    display: block;
+input {
+	border:1px solid #f90;
 }
 
 ul {
@@ -91,14 +84,15 @@ li {
 	
 }
 
-.navigation a {
+.navigation a:link {
 	display: block;
-	padding: 5px;
-	text-decoration:none;
+	padding: 10px;
+	text-decoration: none;
 	border-bottom: 1px solid #ddd;
-	width:307px;
+	width: 287px;
 	background: #f5f5f5;
-	color:#666;
+	color: #666;
+	font-weight: bold;
 }
 
 .navigation a:visited {
@@ -111,6 +105,6 @@ li {
 }
 
 .navigation a:hover {
-	color:#f63;
+	color:#f90;
 	background: #e1e1e1;
 }
