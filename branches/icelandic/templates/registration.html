@@ -8,13 +8,7 @@
 <form method="post">
 
 <table border="0">
-    <tr>
-        <td>Nafn</td>
-        <td class="field{% if errors.postal_code %} errors{% endif %}">
-            <input type="text" name="name" value="{{ previous.name }}" />
-            <span class="errors"><span class="errors">{{ errors.name }}</span></span>
-        </td>
-    </tr>
+    
     <tr>
         <td>Póstnúmer</td>
         <td class="field{% if errors.postal_code %} errors{% endif %}">
@@ -26,6 +20,14 @@
         <td>Fjöldi þátttakenda</td>
         <td>
             <input type="text" name="name" value="" />
+        </td>
+    </tr>
+        
+    <tr>
+        <td>Skrifið inn aldur þáttakenda og setjið kommu á milli</td>
+        <td class="field{% if errors.postal_code %} errors{% endif %}">
+            <input type="text" name="name" value="{{ previous.name }}" />
+            <span class="errors"><span class="errors">{{ errors.name }}</span></span>
         </td>
     </tr>
     <tr>
