@@ -177,16 +177,17 @@ class Assignment(CustomRequestHandler):
         t.question = 'Spurning3?'   
         t.put()        
         
-    def getAssignments(self): return Assignments.gql("order by date asc")
+    def getAssignments(self): return Assignments.gql("order by name asc")
     
-    def getAssignment(self,name):
+    def getAssignment(self, name):
         assignments = Assignments.gql("where name = :1", name)
         return assignments.get()
         
     def getDefaultAssignment(self):
         member = session.get_member(self)
         if member.assignment: return member.assignment
-        assignments = Assignments.gql("")
+        
+        assignments = Assignments.gql("order by name asc")
         return assignments.get()
         
     def getAnswers(self,assignment):
@@ -204,13 +205,12 @@ class Assignment(CustomRequestHandler):
         member.assignment = assignment
         member.put()
         
-    def get_answer_tuples(self, assignment):
-        answers = self.getAnswers(assignment)
+    def get_answer_tuples(self, answers):
         
         tuple_list = []
         
         for answer in answers:
-            tuple_list.add((answer.answer_number,answer.statement,answer.current_state,answer.headed_state,answer.ideal_state,answer.comment))
+            tuple_list.append((answer.answer_number, answer.statement, answer.current_state, answer.headed_state, answer.ideal_state, answer.comment))
         
         return tuple_list
         
@@ -226,14 +226,19 @@ class Assignment(CustomRequestHandler):
         
         #TODO fill inn stored answers
         answers = self.getAnswers(assignment)
-        field_values = self.get_current_assignment()
+        member = session.get_member(self)
+        assignment_answers = AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", member.assignment, member)
+        field_values = self.get_answer_tuples(assignment_answers)
         
+        non_empty_field_count = assignment_answers.count()
+        field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count)
+                        
         self.render_to_response('assignment.html', {
-            'field_values': self.get_field_list(self.field_count),
+            'field_values': field_values,
             'min_values': 5,
             'assignments': self.getAssignments(),
             'assignment': assignment,
-            'user': session.get_member(self)
+            'user': session.get_member(self),
         })
         
     def post(self):
@@ -431,10 +436,10 @@ class Registration(CustomRequestHandler):
             # end confirmation email and inform the user of this
             mail.send_mail(sender=settings.EMAIL_FROM,
                     to=to_line,
-                    subject="Okkar framtíð: Staðfesting nýskráningar",
+                    subject="Framtíðarsýn þjóðar: Staðfesting nýskráningar",
                     body="""Kæri viðtakandi,
                     
-            Takk fyrir að skrá þig í verkefnið Okkar framtíð.  Þú getur tekið
+            Takk fyrir að skrá þig í verkefnið Framtíðarsýn þjóðar.  Þú getur tekið
             þátt í verkefninu með því að smella á tengilinn hér að neðan og
             staðfesta þar með netfangið þitt.
             
