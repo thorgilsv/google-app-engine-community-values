@@ -19,7 +19,7 @@ application = webapp.WSGIApplication([
         (Images.path, Images),
         (Participation.path, Participation),
         (Logout.path, Logout),
-        #(Answer.path, Answer), #fridrik had to disable because it broke my build; Answer does not exist in handlers
+        (Answer.path, Answer), 
         (Activation.path, Activation),
     ], debug = True)
 
