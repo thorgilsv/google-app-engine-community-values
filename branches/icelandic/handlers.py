@@ -231,7 +231,7 @@ class Assignment(CustomRequestHandler):
         field_values = self.get_answer_tuples(assignment_answers)
         
         non_empty_field_count = assignment_answers.count()
-        field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count)
+        field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count+1)
                         
         self.render_to_response('assignment.html', {
             'field_values': field_values,
@@ -253,16 +253,21 @@ class Assignment(CustomRequestHandler):
             fields_tuple = tuple()
             
             for prefix in prefixes:
-                field_name = '%s_%d' % (prefix, number)
+                field_name = '%s_%d' % (prefix, number+1)
                 
                 if field_name in self.request.POST:
-                    fields_tuple += (self.request.POST[field_name],)
+                    field_value = self.request.POST[field_name]
+                    
+                    # The 'value' field is mandatory, skip if empty.
+                    if prefix == 'value' and not field_value:
+                        continue
+                        
+                    fields_tuple += (field_value,)
                 else:
                     continue
             
-            default_tuple = self.get_default_tuple(number)
+            default_tuple = self.get_default_tuple(number+1)
             value_count = len(default_tuple[1:])
-            
             
             #TODO: check that makes sure that value words are distinct -- any(...) class list
             
@@ -291,8 +296,6 @@ class Assignment(CustomRequestHandler):
         
         count=0
         for value in field_values:
-
-            #print value
             if value == None: break
             count+=1
             self.addAnswer(value, count, member.assignment)
@@ -308,7 +311,7 @@ class Assignment(CustomRequestHandler):
             #the user is logging of for now
             self.redirect(Logout.path)
         else:
-            field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count)
+            field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count+1)
             
             self.render_to_response('assignment.html', {
                 'field_values': field_values,
@@ -332,7 +335,6 @@ class Answer(CustomRequestHandler):
         self.response.out.write(render_template('answer.html',{            
             'assignments': self.getAssignments(),
             'answers': self.getAnswers(),
-            'assignment': member.assignment.name,
             'user': session.get_member(self)
             }))
 
@@ -429,7 +431,7 @@ class Registration(CustomRequestHandler):
             temporary_member.email = self.clean_data['email']  
             temporary_member.age = self.clean_data['age']
             temporary_member.gender = self.clean_data['gender']
-            temporary_member.postcode = self.clean_data['postal_code']
+            temporary_member.postcode = int(self.clean_data['postal_code'])
             temporary_member.activation_key = uuid.uuid4().hex
             temporary_member.put()                     
             
