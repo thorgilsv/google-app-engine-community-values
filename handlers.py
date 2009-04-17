@@ -151,7 +151,7 @@ class Assignment(CustomRequestHandler):
         t.headed_state = value[3]
         t.ideal_state = value[4]
         t.comment = value[5]
-        t.answer_number = count
+        t.answer_number = value[0]
         t.assignment = assignment
         t.put()
                 
@@ -284,6 +284,11 @@ class Assignment(CustomRequestHandler):
 
         member = session.get_member(self) # session.get_member('assignment')
         #we will always save the values already submitted        
+        
+        previous_answers = AssignmentAnswer.gql("WHERE member = :1 AND assignment = :2", member, member.assignment)
+        for answer in previous_answers:
+            answer.delete()
+        
         count=0
         for value in field_values:
 
@@ -424,6 +429,7 @@ class Registration(CustomRequestHandler):
             temporary_member.email = self.clean_data['email']  
             temporary_member.age = self.clean_data['age']
             temporary_member.gender = self.clean_data['gender']
+            temporary_member.postcode = self.clean_data['postal_code']
             temporary_member.activation_key = uuid.uuid4().hex
             temporary_member.put()                     
             
