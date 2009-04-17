@@ -2,6 +2,18 @@
 
 
 {% block title %}{{ block.super }} | Verkefni {{ assignment.number }}{% endblock %}
+
+{% block header %}
+<div id="header">
+    <a href="/assignment?var=Verkefni 1">
+	    <img src="/media/img/gif/verkefni-buttons-1.gif" />
+	</a>
+	<a href="/assignment?var=Verkefni 2">
+	<img src="/media/img/gif/verkefni-buttons-2.gif" />
+	</a>
+	<img src="/media/img/gif/verkefni-buttons-3.gif" />
+</div>
+{% endblock %}
 {% block content %}
 <link type="text/css" href="/media/css/ui-slider/jquery-ui-slider.css" rel="stylesheet" />
   <link type="text/css" href="/media/css/konnun/konnun.css" rel="stylesheet" />
@@ -35,9 +47,10 @@
 {{ min_values }} gildi nauðsynleg. {# minimum number of values to require for form before allowing to save (use in javascript) #}
 
 <form method="post">
+    <div class="words">
+    
     {% for field in field_values %}
     
-    <div class="words">
     <fieldset>
         <legend>Orð {{ forloop.counter }}</legend>
         <span class="fi_txt order">
@@ -53,33 +66,27 @@
             <label for="current_state_{{ field.0 }}">Hver er staðan í dag?</label>
             <select id="current_state_{{ field.0 }}" name="current_state_{{ field.0 }}">
               <option></option>
-              <option value="1">Slæm</option>
-              <option value="2">Slöpp</option>
-              <option value="3">Þokkaleg</option>
-              <option value="4">Ágæt</option>
-              <option value="5">Fín</option>
+              {%for choice in choice_names%}
+                  <option value="{{forloop.counter}}"{%ifequal field.2 forloop.counter %} selected{%endifequal%}>{{choice}}</option>
+              {%endfor%}
             </select>
           </span>
           <span class="fi_sel">
             <label for="headed_state_{{ field.0 }}">Hver verður staðan miðað við núverandi stefnu?</label>
             <select id="headed_state_{{ field.0 }}" name="headed_state_{{ field.0 }}">
               <option></option>
-              <option value="1">Slæm</option>
-              <option value="2">Slöpp</option>
-              <option value="3">Þokkaleg</option>
-              <option value="4">Ágæt</option>
-              <option value="5">Fín</option>
+              {%for choice in choice_names%}
+              <option value="{{forloop.counter}}"{%ifequal field.3 forloop.counter %} selected{%endifequal%}>{{choice}}</option>
+              {%endfor%}
             </select>
           </span>
           <span class="fi_sel">
             <label for="ideal_state_{{ field.0 }}">Hver væri óska staðan í framtíðinni?</label>
             <select id="ideal_state_{{ field.0 }}" name="ideal_state_{{ field.0 }}">
               <option></option>
-              <option value="1">Slæm</option>
-              <option value="2">Slöpp</option>
-              <option value="3">Þokkaleg</option>
-              <option value="4">Ágæt</option>
-              <option value="5">Fín</option>
+              {%for choice in choice_names%}
+              <option value="{{forloop.counter}}"{%ifequal field.4 forloop.counter %} selected{%endifequal%}>{{choice}}</option>
+              {%endfor%}
             </select>
           </span>
           <div class="fi_bdy">
@@ -93,7 +100,8 @@
       </div>
     <div class="field">
         <input type="submit" name="quit" value="Hætta í bili"/> <input type="submit" name="completed" value="Næsta verkefni"/>
-    </div>
+        </div>
+
 </form>
 {% else %}
 Það er ekkert verkefni í boði til úrlausnar. :(
