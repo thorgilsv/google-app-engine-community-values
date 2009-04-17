@@ -1,38 +1,45 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 
 
 {% block title %}{{ block.super }} | Verkefni {{ assignment.number }}{% endblock %}
 {% block content %}
+<link type="text/css" href="/media/css/ui-slider/jquery-ui-slider.css" rel="stylesheet" />
+  <link type="text/css" href="/media/css/konnun/konnun.css" rel="stylesheet" />
+  <script src="/media/js/jquery-1.3.2.min.js"></script>
+    <script src="/media/js/jquery.ui-1.7.1.custom.min.js"></script>
+    <script src="/media/js/jquery.eutils-1.0.min.js"></script>
+    <script src="/media/js/ac/jquery.ajaxQueue.js"></script>
+    <script src="/media/js/ac/jquery.bgiframe.min.js"></script>
+    <script src="/media/js/ac/jquery.autocomplete.min.js"></script>
+    <script src="/media/js/konnun-init.js"></script>
+  
 <h1>{{ assignment.name }}</h1>
 
 <p class="question">
     {{ assignment.question }}
 </p>
 
+<p class="reqnote">Reiti merkta með <acronym class="req" title="Þarf að fylla út: ">*</acronym> þarf að fylla út.</p>
 
-<div class="introtext">
-      <p>Sláðu inn 10 orð sem þér þykja mikilvæg fyrir framtíð landsins, og dragðu þau til ....</p>
-      <p>meiri texti, etc. etc.</p>
-</div>
+{{ min_values }} gildi nauðsynleg. {# minimum number of values to require for form before allowing to save (use in javascript) #}
 
-
-<div class="words">
-
-
-      <fieldset>
-        <legend>Orð A</legend>
+{% for field in field_values %}
+<form method="post">
+    <div class="words">
+    <fieldset>
+        <legend>Orð {{ forloop.counter }}</legend>
         <span class="fi_txt order">
-          <label for="w1_ord">Röð:</label>
-          <input id="w1_ord" type="number" name="w1_ord" size="1" maxlength="2" value="1" />
+          <label for="w{{ field.0 }}_ord">Röð:</label>
+          <input id="w{{ field.0 }}_ord" type="number" name="w{{ field.0 }}_ord" size="1" maxlength="2" value="1" />
         </span>
         <span class="fi_txt word">
-          <label for="w1">Orð:</label>
-          <input id="w1" type="text" name="w1" value="" />
+          <label for="value_{{ field.0 }}">Orð:</label>
+          <input id="value_{{ field.0 }}" type="text" name="value_{{ field.0 }}" value="" />
         </span>
         <div class="eval">
           <span class="fi_sel">
-            <label for="w1_now">Hver er staðan í dag?</label>
-            <select id="w1_now" name="w1_now">
+            <label for="current_state_{{ field.0 }}">Hver er staðan í dag?</label>
+            <select id="current_state_{{ field.0 }}" name="current_state_{{ field.0 }}">
               <option></option>
               <option value="1">Slæm</option>
               <option value="2">Slöpp</option>
@@ -42,8 +49,8 @@
             </select>
           </span>
           <span class="fi_sel">
-            <label for="w1_future">Hver verður staðan miðað við núverandi stefnu?</label>
-            <select id="w1_future" name="w1_future">
+            <label for="headed_state_{{ field.0 }}">Hver verður staðan miðað við núverandi stefnu?</label>
+            <select id="headed_state_{{ field.0 }}" name="headed_state_{{ field.0 }}">
               <option></option>
               <option value="1">Slæm</option>
               <option value="2">Slöpp</option>
@@ -53,8 +60,8 @@
             </select>
           </span>
           <span class="fi_sel">
-            <label for="w1_wish">Hver væri óska staðan í framtíðinni?</label>
-            <select id="w1_wish" name="w1_wish">
+            <label for="ideal_state_{{ field.0 }}">Hver væri óska staðan í framtíðinni?</label>
+            <select id="ideal_state_{{ field.0 }}" name="ideal_state_{{ field.0 }}">
               <option></option>
               <option value="1">Slæm</option>
               <option value="2">Slöpp</option>
@@ -64,26 +71,14 @@
             </select>
           </span>
           <div class="fi_bdy">
-            <label for="w1_comment">Viljið þið segja meira? <i>(140 orð eða færri)</i></label>
-            <textarea id="w1_comment" name="w1_comment" cols="30" rows="5"></textarea>
+            <label for="comment_{{ field.0 }}">Viljið þið segja meira? <i>(140 orð eða færri)</i></label>
+            <textarea id="comment_{{ field.0 }}" name="comment_{{ field.0 }}" cols="30" rows="5"></textarea>
           </div>
         </div>
       </fieldset>
-    </div>
-{{ min_values }} gildi nauðsynleg. {# minimum number of values to require for form before allowing to save (use in javascript) #}
-
-<form method="post">
-    {% for field_values in field_values %}
-    <div class="field">
-        {{ forloop.counter }}.
-        <input type="text" name="value_{{ field_values.0 }}" value="{{ field_values.1 }}" />
-        
-        {# update hidden fields with values from 0-99 with jQuery sliders #}
-        <input type="hidden" name="current_state_{{ field_values.0 }}" value="{{ field_values.2 }}" />
-        <input type="hidden" name="headed_state_{{ field_values.0 }}" value="{{ field_values.3 }}" />
-        <input type="hidden" name="ideal_state_{{ field_values.0 }}" value="{{ field_values.4 }}" />
-    </div>
-    {% endfor %}
+      {% endfor %}
+      
+      </div>
     <div class="field">
         <input type="submit" name="quit" value="Hætta í bili"/> <input type="submit" name="completed" value="Verkefni lokið"/>
     </div>

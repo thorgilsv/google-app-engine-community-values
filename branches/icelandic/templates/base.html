@@ -51,9 +51,11 @@
 			
             {% block sidebar %}{% endblock %}
             
-            <div id="content-projects">
+            <div id="content{% block front_page %}-projects{% endblock %}" class="">
+
             {% block content %}Content.{% endblock %}
             </div>
+            
             <div id="footer">
 				<img src="/media/img/jpg/hugm-logo.jpg" width="130" height="28" border="0" alt="">
 			</div>

@@ -135,13 +135,14 @@ class Assignment(CustomRequestHandler):
     
     def get_default_tuple(self, number):
         #TODO: change from tuple to class for dramatically increased readability
-        return (number, '', '50', '50', '50')
+        return (number, '', '50', '50', '50', '')
     
     def get_field_list(self, count, from_number=0):
         """Return a tuple of default values."""
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
     def addAnswer(self, value, count, assignment):
+
         a = self.getAnswer(assignment,count)
         if not a: t = AssignmentAnswer()
         else: t=a
@@ -150,6 +151,9 @@ class Assignment(CustomRequestHandler):
         t.answer_number = count
         t.assignment = assignment
         db.put(t)
+        
+    def get_answers(self):
+        Assignment.gql("WHERE assignment = :1 AND member = :2", self.get_current_assignment(), session.get_member(self))
         
     def deleteAssignments(self):        
         q = db.GqlQuery("SELECT * FROM Assignments")
@@ -173,7 +177,7 @@ class Assignment(CustomRequestHandler):
     def getAssignments(self): return Assignments.gql("order by date asc")
     
     def getAssignment(self,name):
-        assignments = Assignments.gql("where name = :1",name)
+        assignments = Assignments.gql("where name = :1", name)
         return assignments.get()
         
     def getDefaultAssignment(self):
@@ -187,16 +191,16 @@ class Assignment(CustomRequestHandler):
         q = AssignmentAnswer.gql("where assignment = :1 and member = :2 and answer_number = :3 ", assignment, session.get_member(self), number)
         return q.get()
     
+    def get_current_assignment(self):
+        return self.getAssignment(self.request.get('var'))
+        
     def updateUser(self,assignment):
         member = session.get_member(self)
         member.assignment = assignment
         member.put()
         
-    
     def get(self):
         self.require_login()
-        #self.deleteAssignments()
-        #self.createAssignments()
         assignment_name = self.request.get('var')
         if assignment_name: assignment = self.getAssignment(assignment_name)
         else : assignment = self.getDefaultAssignment()
@@ -221,15 +225,15 @@ class Assignment(CustomRequestHandler):
         
         #TODO: fix undercommenting
         field_values = []
-        
+                
         # Fill `field_values` with values of non-empty fields.
         for number in range(self.field_count):
-            prefixes = ('value', 'current_state', 'headed_state', 'ideal_state')
+            prefixes = ('value', 'current_state', 'headed_state', 'ideal_state', 'comment')
             fields_tuple = tuple()
             
             for prefix in prefixes:
                 field_name = '%s_%d' % (prefix, number)
-            
+                
                 if field_name in self.request.POST:
                     fields_tuple += (self.request.POST[field_name],)
                 else:
@@ -237,6 +241,7 @@ class Assignment(CustomRequestHandler):
             
             default_tuple = self.get_default_tuple(number)
             value_count = len(default_tuple[1:])
+            
             
             #TODO: check that makes sure that value words are distinct -- any(...) class list
             
@@ -255,10 +260,12 @@ class Assignment(CustomRequestHandler):
         # Fill up the field_values tuple with empty fields to make up for the
         # ones that were empty or invalid. This way, non-empty fields will be
         # grouped together at the top.
+
         member = session.get_member(self) # session.get_member('assignment')
         #we will always save the values already submitted        
         count=0
         for value in field_values:
+
             #print value
             if value == None: break
             count+=1
@@ -266,6 +273,7 @@ class Assignment(CustomRequestHandler):
         
         has_enough_data = non_empty_field_count >= self.mandatory_field_count
         
+
         if has_enough_data and self.request.get('completed'):
             #redirect to show answers
             self.redirect(Answer.path)
