@@ -3,9 +3,9 @@
 
 {% block title %}{{ block.super }} | Svörin þín{% endblock %}
 {% block content %}
-<h2>{{assignment}}</h2>
+<h2>{{ member.assignment.name }}</h2>
 
-Hér eru niðurstöðurnar þínar úr {{assignment}}:
+Hér eru niðurstöðurnar þínar úr {{ member.assignment.name }}:
 
 <br><br>
 {% for answer in answers %}
