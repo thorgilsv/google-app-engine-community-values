@@ -126,7 +126,13 @@ class Participation(CustomRequestHandler):
     
     def get(self):
         self.render_to_response('participation.html',{'show_info_links': True})
+
+class Essay(CustomRequestHandler):
+    path = '/essay'
+    
+    def get(self):
         
+
 class Assignment(CustomRequestHandler):
     #TODO: require login
     path = '/assignment'
@@ -142,10 +148,7 @@ class Assignment(CustomRequestHandler):
         """Return a tuple of default values."""
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
-    def addAnswer(self, value, count, assignment):
-        a = self.getAnswer(assignment,count)
-        if not a: t = AssignmentAnswer()
-        else: t=a
+    def addAnswer(self, value, assignment):
         t.member = session.get_member(self)
         t.statement = value[1]
         t.current_state = int(value[2])
@@ -190,7 +193,7 @@ class Assignment(CustomRequestHandler):
     def getAnswers(self,assignment):
         return AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", assignment, session.get_member(self))
     
-    def getAnswer(self,assignment, number):
+    def getAnswer(self, assignment, number):
         q = AssignmentAnswer.gql("where assignment = :1 and member = :2 and answer_number = :3 ", assignment, session.get_member(self), number)
         return q.get()
     
@@ -292,11 +295,9 @@ class Assignment(CustomRequestHandler):
         for answer in previous_answers:
             answer.delete()
         
-        count=0
         for value in field_values:
             if value == None: break
-            count+=1
-            self.addAnswer(value, count, member.assignment)
+            self.addAnswer(value, member.assignment)
         
         has_enough_data = non_empty_field_count >= self.mandatory_field_count
         

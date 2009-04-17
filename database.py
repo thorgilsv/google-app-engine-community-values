@@ -43,18 +43,10 @@ class AssignmentAnswer(db.Model):
     answer_number = db.IntegerProperty()
     assignment = db.ReferenceProperty(Assignments)
     
- 
+class Essay(db.Model):
+    member = db.ReferenceProperty(Member)
+    text = db.TextProperty()
   
-#class Group(db.Model):
-#    date = db.DateTimeProperty(auto_now_add=True)
-#    name = db.StringProperty()
-#    mamber = db.ReferenceProperty(Member)
-#    
-#class GroupMember(db.Model):
-#    date = db.DateTimeProperty(auto_now_add=True)
-#    group = db.ReferenceProperty(Group)
-#    member = db.ReferenceProperty(Member)
-    
 class Session(db.Model):
     session_key = db.StringProperty()
     member = db.ReferenceProperty(Member)
