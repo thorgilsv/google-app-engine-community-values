@@ -1,7 +1,7 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from handlers import MainPage, Registration, Login, Logout, Assignment, About, Why, YourOpinion, ForAll, Society, Values, ProjectOwners, Information, Images, Participation
+from handlers import *
                   
 application = webapp.WSGIApplication([
         (MainPage.path, MainPage),
@@ -19,6 +19,7 @@ application = webapp.WSGIApplication([
         (Images.path, Images),
         (Participation.path, Participation),
         (Logout.path, Logout),
+        (Activation.path, Activation),
     ], debug = True)
 
 

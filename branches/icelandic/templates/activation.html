@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+{% block title %}{{ block.super }} | Staðfesting nýskráningar {% endblock %}
+{% block content %}
+<h2>Staðfesting nýskráningar</h2>
+{{ error }}
+
+{% if not error %}
+<p>Staðfestingin tókst með ágætum og ertu nú virkur notandi.  Þú ættir nú að geta skráð þig inn og tekið þátt í verkefninu.</p>
+
+<p><a href="/login">Innskráning &rarr;</a></p>
+{% endif %}
+
+{% endblock %}
