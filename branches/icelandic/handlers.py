@@ -131,7 +131,19 @@ class Essay(CustomRequestHandler):
     path = '/essay'
     
     def get(self):
+        assignment = {
+            'name': 'Verkefni 3',
+            'question': "Viljið þið segja eitthvað að endingu?",
+            'number': 3,
+        }
         
+        self.render_to_response('assignment.html', {
+            'assignment': assignment,
+            'is_essay': True,
+        })
+        
+    def post(self):
+        pass
 
 class Assignment(CustomRequestHandler):
     #TODO: require login
@@ -149,6 +161,7 @@ class Assignment(CustomRequestHandler):
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
     def addAnswer(self, value, assignment):
+        t = AssignmentAnswer()
         t.member = session.get_member(self)
         t.statement = value[1]
         t.current_state = int(value[2])
@@ -235,7 +248,7 @@ class Assignment(CustomRequestHandler):
                         
         self.render_to_response('assignment.html', {
             'field_values': field_values,
-            'choice_names': ('Slæm','Slöpp','Þokkaleg','Ágæt','Fín'),
+            'choice_names': ('Slæm', 'Slöpp', 'Hlutlaus', 'Ágæt', 'Fín'),
             'min_values': 5,
             'assignments': self.getAssignments(),
             'assignment': assignment,
