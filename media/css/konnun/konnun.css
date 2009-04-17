@@ -1,5 +1,10 @@
 .introtext {
-  margin-bottom: 1em;
+}
+
+
+.words {
+  margin: 1em 0;
+  _height:0;~min-height:0; /* ie hasLayout fix */
 }
 
 
@@ -20,6 +25,11 @@ fieldset.open {
 }
 fieldset.ui-sortable-helper {
   background-color: #f2fafd;
+  opacity: .75;
+  filter: alpha(opacity=75);
+}
+fieldset.ui-sortable-placeholder {
+  height: 1.75em !important;
 }
 
 .js-active legend { display: none; }
@@ -35,7 +45,6 @@ fieldset h3 { /* <legend> replacement */
 
 
 .eval {
-  overflow: hidden;
   margin: 10px 7% 10px 1.76em;
   padding-left: 10px;
   _height:0;~min-height:0; /* ie hasLayout fix */
@@ -46,14 +55,9 @@ fieldset h3 { /* <legend> replacement */
 .js-active .order { display: none; }
 
 
-.word label { position:absolute;right:9999px;left:auto; }
-.word input {
-  width: 87%;
-  font-size: 1.25em;
-}
-
 textarea,
 .fi_txt input {
+  font-size: 1em;
   background: #fff;
   border: 1px solid #fcd39f;
 }
@@ -61,8 +65,6 @@ textarea:focus,
 .fi_txt input:focus {
   border-color: #faa73d;
 }
-
-
 
 label i {
   font-style: normal;
@@ -112,6 +114,13 @@ label i {
   margin: 3px -1px -1px -1px;
 }
 
+
+
+.word label { position:absolute;right:9999px;left:auto; }
+.word input {
+  width: 87%;
+  font-size: 1.25em;
+}
 
 
 
