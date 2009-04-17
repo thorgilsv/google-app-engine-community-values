@@ -9,13 +9,15 @@ Hér eru niðurstöðurnar þínar úr {{assignment}}:
 
 <br><br>
 {% for answer in answers %}
-    <div class="field">    
-    {{answer.answer_number}},
+    <div class="field"> 
+    {{answer.answer_number}}.
     {{answer.statement}},
-    {{answer.current_state}},
-    {{answer.headed_state}},
-    {{answer.ideal_state}},
-    {{answer.comment}},
+    {{answer.current_state}}/6,
+    {{answer.headed_state}}/6,
+    {{answer.ideal_state}}/6
+    {% if answer.comment %}
+    {{answer.comment}}
+    {% endif %}
     </div>
 {% endfor %}
 
