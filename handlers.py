@@ -198,8 +198,10 @@ class Assignment(CustomRequestHandler):
 
         self.updateUser(assignment)
         
-        #start by looking for stored answers
+        #TODO fill inn stored answers
         answers = self.getAnswers(assignment)
+        field_values = self.get_field_list(self.field_count)
+
         
         self.render_to_response('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
@@ -207,7 +209,6 @@ class Assignment(CustomRequestHandler):
             'lvl': 'inner',
             'assignments': self.getAssignments(),
             'assignment': assignment,
-            #'answers': answers,
         })
         
     def post(self):
@@ -286,6 +287,7 @@ class Answer(CustomRequestHandler):
     def getAssignments(self): return Assignments.gql("")
     
     def get(self):
+        self.require_login()
         member = session.get_member(self)
         self.response.out.write(render_template('answer.html',{
             'answers': self.getAnswers(),
