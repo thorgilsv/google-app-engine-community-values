@@ -21,7 +21,7 @@ application = webapp.WSGIApplication([
         (Logout.path, Logout),
         (Answer.path, Answer), 
         (Activation.path, Activation),
-        (Essay.path, Essay),
+        (EssayAssignment.path, EssayAssignment),
         
     ], debug = True)
 

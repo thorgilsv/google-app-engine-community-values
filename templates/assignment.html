@@ -33,7 +33,11 @@
     Að lokum viljum við bjóða ykkur að segja ykkar skoðun. Hér má skrifa hvað sem ykkur langar. Til dæmis ritgerð um dag í lífi ykkar í framtíðinni, blogg úr framtíðinni, skoðun ykkar á verkefninu, þjóðfélaginu eða hverju sem er. Orðið er frjálst.
 </p>
 
-<textarea style="width: 100%"></textarea>
+<form method="post">
+<textarea style="width: 95%; height: 15em;" name="essay_text">{{ essay.text }}</textarea>
+<input type="submit" name="completed" value="Ljúka við verkefni" />
+</form>
+
 {%else%}
 <link type="text/css" href="/media/css/ui-slider/jquery-ui-slider.css" rel="stylesheet" />
     <script src="/media/js/jquery-1.3.2.min.js"></script>
