@@ -6,8 +6,8 @@
 	<li><a href="/about">Um verkefnið</a></li>	
 	<li><a href="/teachers-guide">Til kennara</a></li>
 	{% if user %}                                  
-    {% for assignment in assignments %}
-    <li><a href="/assignment?var={{assignment.name}}">{{assignment.name}}</a> </li>
+    {% for each in assignments %}
+    <li><a href="/assignment?var={{each.name}}">vv{{each.name}}</a> </li>
      
     {% endfor %}
     {% else %}

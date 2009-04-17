@@ -211,7 +211,6 @@ class Assignment(CustomRequestHandler):
         self.render_to_response('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
             'min_values': 5,
-            'lvl': 'inner',
             'assignments': self.getAssignments(),
             'assignment': assignment,
         })
@@ -270,7 +269,7 @@ class Assignment(CustomRequestHandler):
             #redirect to show answers
             self.redirect(Answer.path)
             
-        elif self.request.get('quit'):
+        elif self.request.get('quit') :
             #the user is logging of for now
             self.redirect(Logout.path)
         else:
@@ -279,12 +278,13 @@ class Assignment(CustomRequestHandler):
             self.render_to_response('assignment.html', {
                 'field_values': field_values,
                 'min_values': 5,
-                'lvl': 'inner',
+                'member': member,
             })
 
 
 class Answer(CustomRequestHandler):
     path = '/answers'
+    
     def getAnswers(self):
         member = session.get_member(self)
         return AssignmentAnswer.gql("where assignment = :1 and member = :2", member.assignment, member)
@@ -294,11 +294,12 @@ class Answer(CustomRequestHandler):
     def get(self):
         self.require_login()
         member = session.get_member(self)
-        self.response.out.write(render_template('answer.html',{
+        self.response.out.write(render_template('answer.html',{            
+            'assignments': self.getAssignments(),
             'answers': self.getAnswers(),
             'assignment': member.assignment.name,
-            'assignments': self.getAssignments(),
-            'lvl': 'inner',}))
+            'member': member,
+            }))
 
 
 class Activation(CustomRequestHandler):
