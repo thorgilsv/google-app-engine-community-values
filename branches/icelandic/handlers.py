@@ -127,10 +127,14 @@ class Participation(CustomRequestHandler):
     def get(self):
         self.render_to_response('participation.html',{'show_info_links': True})
 
-class Essay(CustomRequestHandler):
+class EssayAssignment(CustomRequestHandler):
     path = '/essay'
     
+    def get_member_essay(self):
+        return Essay.gql('WHERE member = :1', session.get_member(self)).get()
+    
     def get(self):
+        
         assignment = {
             'name': 'Verkefni 3',
             'question': "Viljið þið segja eitthvað að endingu?",
@@ -140,10 +144,25 @@ class Essay(CustomRequestHandler):
         self.render_to_response('assignment.html', {
             'assignment': assignment,
             'is_essay': True,
+            'essay': self.get_member_essay()
         })
         
     def post(self):
-        pass
+        existing_essay = self.get_member_essay()
+        if existing_essay:
+            essay = existing_essay
+        else:
+            essay = Essay()
+            essay.member = session.get_member(self)
+        
+        essay_text = self.request.get('essay_text')
+        
+        if essay_text:
+            essay.text = essay_text
+            essay.put()
+            self.render_to_response("thanks.html")
+        else:
+            self.redirect(self.path)
 
 class Assignment(CustomRequestHandler):
     #TODO: require login
@@ -389,11 +408,7 @@ class Activation(CustomRequestHandler):
             member.put()
             temporary_member.delete()
             
-            self.render_to_response('activation.html', {
-                'member': member,
-            })
-            
-            
+            self.redirect(Assignment.path)
         else:
             self.render_to_response('activation.html', {
                 'error': "Þessi þessi staðfestingartengill er ekki virkur.  Vinsamlega reyndu nýskráningu að nýju.",
