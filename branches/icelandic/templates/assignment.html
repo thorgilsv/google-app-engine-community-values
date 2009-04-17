@@ -3,12 +3,73 @@
 
 {% block title %}{{ block.super }} | Verkefni {{ assignment.number }}{% endblock %}
 {% block content %}
-<h2>{{ assignment.name }}</h2>
+<h1>{{ assignment.name }}</h1>
 
 <p class="question">
     {{ assignment.question }}
 </p>
 
+
+<div class="introtext">
+      <p>Sláðu inn 10 orð sem þér þykja mikilvæg fyrir framtíð landsins, og dragðu þau til ....</p>
+      <p>meiri texti, etc. etc.</p>
+</div>
+
+
+<div class="words">
+
+
+      <fieldset>
+        <legend>Orð A</legend>
+        <span class="fi_txt order">
+          <label for="w1_ord">Röð:</label>
+          <input id="w1_ord" type="number" name="w1_ord" size="1" maxlength="2" value="1" />
+        </span>
+        <span class="fi_txt word">
+          <label for="w1">Orð:</label>
+          <input id="w1" type="text" name="w1" value="" />
+        </span>
+        <div class="eval">
+          <span class="fi_sel">
+            <label for="w1_now">Hver er staðan í dag?</label>
+            <select id="w1_now" name="w1_now">
+              <option></option>
+              <option value="1">Slæm</option>
+              <option value="2">Slöpp</option>
+              <option value="3">Þokkaleg</option>
+              <option value="4">Ágæt</option>
+              <option value="5">Fín</option>
+            </select>
+          </span>
+          <span class="fi_sel">
+            <label for="w1_future">Hver verður staðan miðað við núverandi stefnu?</label>
+            <select id="w1_future" name="w1_future">
+              <option></option>
+              <option value="1">Slæm</option>
+              <option value="2">Slöpp</option>
+              <option value="3">Þokkaleg</option>
+              <option value="4">Ágæt</option>
+              <option value="5">Fín</option>
+            </select>
+          </span>
+          <span class="fi_sel">
+            <label for="w1_wish">Hver væri óska staðan í framtíðinni?</label>
+            <select id="w1_wish" name="w1_wish">
+              <option></option>
+              <option value="1">Slæm</option>
+              <option value="2">Slöpp</option>
+              <option value="3">Þokkaleg</option>
+              <option value="4">Ágæt</option>
+              <option value="5">Fín</option>
+            </select>
+          </span>
+          <div class="fi_bdy">
+            <label for="w1_comment">Viljið þið segja meira? <i>(140 orð eða færri)</i></label>
+            <textarea id="w1_comment" name="w1_comment" cols="30" rows="5"></textarea>
+          </div>
+        </div>
+      </fieldset>
+    </div>
 {{ min_values }} gildi nauðsynleg. {# minimum number of values to require for form before allowing to save (use in javascript) #}
 
 <form method="post">
