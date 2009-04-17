@@ -3,8 +3,9 @@
 <div id="sidebar">
     
 <ul class="navigation" id="list-menu"> 
-	<li><a href="/about">Um verkefnið</a></li> 
+	<li><a href="/about">Um verkefnið</a></li>	
 	<li><a href="/teachers-guide">Til kennara</a></li>
+	<li><a href="/register">Nýskrá</a></li> 
 	{% if user %}                                  
     {% for assignment in assignments %}
     <li><a href="/assignment?var={{assignment.name}}">{{assignment.name}}</a> </li>
