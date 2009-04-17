@@ -22,16 +22,15 @@ class Member(db.Model):
     name = db.StringProperty()
     password = db.StringProperty()
     email = db.EmailProperty()
-    age = db.IntegerProperty()
-    gender = db.StringProperty()
-    school = db.StringProperty()
     postcode = db.IntegerProperty()
-    schoollvl = db.StringProperty()
     date = db.DateTimeProperty(auto_now_add=True)
     #we are storing the active assignment here 
     assignment = db.ReferenceProperty(Assignments) 
     
-
+class Particpant(db.Model):
+    member = db.ReferenceProperty(Member)
+    age = db.IntegerProperty()
+    gender = db.StringProperty()
     
 class AssignmentAnswer(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
