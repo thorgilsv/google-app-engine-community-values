@@ -10,45 +10,54 @@
 
   
     </head>
-    <body>
+    <body class="body">
         <div id="main">
-            {{ user.email }}
-            <div id="sidebar">
-            {% block sidebar %}
-            <ul class="navigation">
-                <li><a href="/">Forsíða</a></li>
-           
-                {% if user %}                                  
-                {% for assignment in assignments %}
-                <li><a href="/assignment?var={{assignment.name}}">{{assignment.name}}</a> </li>
-                {% endfor %}
+            <div id="sign-in">
+                <form action="/login" method="post">
+                {% if user %}
+                <table style="margin-left:auto;color:white;font-weight:bold">
+					<tr>
+						<td style="height:55px"></td>
+					</tr>
+					<tr>
+						<td>{{ user.email }}
+						    [<a href="/logout">útskrá</a>]</td>
+					</tr>
+				</table>				
 
-                <li><a href="/logout">Útskráning</a> </li>                
-                {% else %}                                 
-                <li><a href="/login">Innskráning</a></li>
-                <li><a href="/register">Nýskráning</a></li>
-                {% endif %}
-                
-                {% if show_info_links %}
-                <li><a href="/about">Um verkefnið</a></li>
-                <li><a href="/why">Af hverju þurfum við framtíðarsýn?</a></li>
-                <li><a href="/your_opinion">Af hverju skiptir þín skoðun máli?</a></li>
-                <li><a href="/for_all">Er verkefnið fyrir alla aldurshópa?</a></li>
-                <li><a href="/society">Hvernig samfélag viljum við?</a></li>
-                <li><a href="/values">Hvað eru gildi og til hvers þurfum við þau? </a></li>
-                <li><a href="/project_owners">Hver stendur að verkefninu?</a></li>
-                <li><a href="/information">Viltu fræðast meira?</a></li>
-                <li><a href="/images">Myndir og annað efni sem frjálst er að nota</a></li>
-                <li><a href="/participation">Þátttaka í verkefninu</a></li>
-                {% endif %}
-                <li><a href="#">Hjálp</a> {# TODO: add help #}</li>
-            </ul>
-            {% endblock %}
-            </div>
+				{% else %}
+				<table style="margin-left:auto;color:white;font-weight:bold">
+					<tr>
+						<td style="height:30px"></td>
+					</tr>
+					<tr>
+						<td>netfang:</td>
+						<td>lykilorð:</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="email" /></td>
+						<td><input type="password" name="password" /></td>
+						<td><button>Skrá inn</button></td>
+					</tr>
+				</table>
+				{% endif %}
+				</form>
+				  
+			</div>
+			
+			<div id="header">
+				
+			</div>
+			
+            {% block sidebar %}{% endblock %}
+            
             <div id="content">
             {% block content %}Content.{% endblock %}
             </div>
-            
+            <div id="footer">
+				<img src="/media/img/jpg/hugm-logo.jpg" width="130" height="28" border="0" alt="">
+			</div>
         </div>
     </body>
    

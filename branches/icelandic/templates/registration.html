@@ -3,113 +3,60 @@
 
 {% block title %}{{ block.super }} | Nýskráning{% endblock %}
 {% block content %}
-<h2>Nýskráning</h2>
-
-<p>
-    Hvort sem verið er að skrá einn notanda eða marga notendur er það mjög
-    einfalt. Fyllið út reitina hér fyrir neðan og ef ykkur vantar nánari
-    upplýsingar þá er hnappur með spurningamerki við hvern lið sem hægt er að
-    smella á og fá frekari upplýsingar.
-</p>
+<h2>Skráið ykkur hér í verkefnið:</h2>
 
 <form method="post">
 
-    <div class="field">
-        {{ errors.name }}
-        <label>Nafn</label>
-        <input type="text" name="name" value="{{ previous.name }}" />
-    </div>
+<table border="0">
+    <tr>
+        <td>Nafn</td>
+        <td class="field{% if errors.postal_code %} errors{% endif %}">
+            <input type="text" name="name" value="{{ previous.name }}" />
+            <span class="errors"><span class="errors">{{ errors.name }}</span></span>
+        </td>
+    </tr>
+    <tr>
+        <td>Póstnúmer</td>
+        <td class="field{% if errors.postal_code %} errors{% endif %}">
+            <input type="text" name="postal_code" value="{{ previous.postal_code }}" maxlength="3" />
+            <span class="errors">{{ errors.postal_code }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td>Fjöldi þátttakenda</td>
+        <td>
+            <input type="text" name="name" value="" />
+        </td>
+    </tr>
+    <tr>
+        <td>Netfang</td>
+        <td class="field{% if errors.email %} errors{% endif %}">
+            <input type="text" name="email" value="{{ previous.email }}" />
+            <span class="errors">{{ errors.email }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td>Lykilorð</td>
+        <td class="field{% if errors.password %} errors{% endif %}">
+            <input type="password" name="password" value="{{ previous.password }}" />
+            <span class="errors">{{ errors.password }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td>Lykilorð aftur</td>
+        <td class="field{% if errors.password_confirm %} errors{% endif %}">
+            <input type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
+            <span class="errors">{{ errors.password_confirm }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <input type="submit" name="register" value="Nýskrá" />
+        </td>
+    </tr>
+    
+</table>
 
-    <div class="field">
-        {{ errors.postal_code }}
-        <label>Póstnúmer</label>
-        <input type="text" name="postal_code" value="{{ previous.postal_code }}" />
-    </div>
-
-    {# This is for the sole purpose of populating the .participant_list. #}
-    {# No attempt is made by the Registration class to verify this field. #}
-    <div class="field">
-        <label>Fjöldi þáttakenda</label>
-        <input type="text" name="participant_count" />
-    </div>
-
-    {# TODO We need this to be with respect to number of participants. #}
-    <div class="field">
-
-    {% for each in participants %}        
-        <div class="field">
-        {{ errors.age }}
-            Aldur <input type="text" name="age" value="{{ previous.age }}"/>
-            <input type="radio" name="gender" value="kk" />kk
-            <input type="radio" name="gender" value="kvk" />kvk
-        </div>
-        {% endfor %}
-    </div>
-
-    <div class="field">
-        {{ errors.email }}
-        <label>Netfang*</label>
-        <input type="text" name="email" value="{{ previous.email }}" />
-    </div>
-
-    <div class="field">
-        {{ errors.password }}
-        <label>Lykilorð*</label>
-        <input type="password" name="password" value="{{ previous.password }}" />
-    </div>
-
-    <div class="field">
-        {{ errors.password_confirm }}
-        <label>Lykilorð aftur*</label>
-        <input type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
-    </div>
-
-  <!--  <div class="field">
-        {{ errors.school }}
-        <label>Skóli</label>
-        <select name="school" size="1">
-                <option value="empty">-- VELDU SKÓLA --</option>
-                <option>1 Skoli</option>
-                <option>2 Skoli</option>
-                <option>3 Skoli</option>
-                <option>4 Skoli</option>
-        </select>
-    </div>
-
-    <div class="field">
-        {{ errors.class }}
-        <label>Bekkur</label>
-        <select name="class" size="1">
-            <option value="empty">-- VELDU BEKK --</option>
-            <option>1. bekkur</option>
-            <option>2. bekkur</option>
-            <option>3. bekkur</option>
-            <option>4. bekkur</option>
-            <option>5. bekkur</option>
-            <option>6. bekkur</option>
-            <option>7. bekkur</option>
-            <option>8. bekkur</option>
-            <option>9. bekkur</option>
-            <option>10. bekkur</option>
-        </select>
-    </div>-->
-
-    <div class="field">
-        <input type="submit" name="register" value="Nýskrá"/>
-    </div>
 </form>
-
-<!--<h2>Debug TEMP skráðir einstaklingar Debug</h2>-->
-<!---->
-<!--    {% for member in members %}-->
-<!--    <div class="field">-->
-<!--        {{member.name}},  -->
-<!--        {{member.email}}, -->
-<!--        {{member.age}}, -->
-<!--        {{member.gender}}-->
-<!--        {{member.activation_key}} -->
-<!--    </div>-->
-<!--    {% endfor %}-->
-
-
 {% endblock %}
