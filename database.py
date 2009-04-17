@@ -13,6 +13,11 @@ class TempMember(db.Model):
     activation_key = db.StringProperty()
     date = db.DateTimeProperty(auto_now_add=True)
   
+class Assignments(db.Model):
+    date = db.DateTimeProperty(auto_now_add=True)
+    name = db.StringProperty()
+    question = db.StringProperty()
+  
 class Member(db.Model):
     name = db.StringProperty()
     password = db.StringProperty()
@@ -22,12 +27,11 @@ class Member(db.Model):
     school = db.StringProperty()
     postcode = db.IntegerProperty()
     schoollvl = db.StringProperty()
-    date = db.DateTimeProperty(auto_now_add=True)    
-    
-class Assignments(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
-    name = db.StringProperty()
-    question = db.StringProperty()
+    #we are storing the active assignment here 
+    assignment = db.ReferenceProperty(Assignments) 
+    
+
     
 class AssignmentAnswer(db.Model):
     date = db.DateTimeProperty(auto_now_add=True)
