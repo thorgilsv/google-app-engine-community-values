@@ -2,6 +2,7 @@
 import re
 import uuid
 
+
 from google.appengine.ext import webapp
 from google.appengine.api import mail
 from util import render_template
@@ -393,6 +394,25 @@ class Registration(CustomRequestHandler):
                 })
         
     def get_members(self): return Member.gql("order by date desc")
+    
+    def sendForgottenPassword(self,email):
+        q = Member.gql("where email = :1", email)
+        member = q.get()
+                    
+        if not member: return
+        # send password in email
+        
+        mail.send_mail(sender=settings.EMAIL_FROM,
+                    to=email,
+                    subject="Framtíðarsýn þjóðar: Gleymt lykilorð",
+                    body="""Kæri viðtakandi,
+                    
+                            Lykilorð þitt er '%s'
+                            
+                            Takk fyrir þátttökuna,
+                            Hugmyndaráðuneytið""" % member.password.__str__()
+                        )       
+        
         
     def post(self):
         # Data that is ready to be inserted into the database.
@@ -483,6 +503,7 @@ class Registration(CustomRequestHandler):
         name = self.request.get('name')
         
         # name optional
+        
         if name_regex.match(name) or name.strip() == '':
             self.clean_data['name'] = name
         else:
@@ -492,7 +513,8 @@ class Registration(CustomRequestHandler):
         """Validate the e-mail address pattern and not whether it is active."""
         email = self.request.get('email')
         if mail.is_email_valid(email):
-            if Member.gql('WHERE email = :1', email).get():
+            if self.request.get('gleymt'): self.sendForgottenPassword(email)
+            elif Member.gql('WHERE email = :1', email).get():
                 self.field_errors['email'] = "Þetta netfang er þegar skráð í kerfið okkar."
             elif TempMember.gql('WHERE email = :1', email).get():
                 self.field_errors['email'] = "Þetta netfang er skráð í kerfið okkar en hefur ekki verið virkjað.  Skoðaðu tölvupóstinn þinn og athugaðu hvort þér hefur borist staðfestingarpóstur."
