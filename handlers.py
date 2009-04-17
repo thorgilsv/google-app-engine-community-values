@@ -255,6 +255,16 @@ class Assignment(CustomRequestHandler):
             'user': session.get_member(self),
         })
         
+        def updateMemberAssignment(self, member):
+            if member.assignment == None:
+                self.redirect(Logout.path)
+            if member.assignment.name == 'Verkefni 1':
+                member = getAssignment('Verkefni 2')
+                self.redirect(Assignment.path)
+            elif member.assignment.name == 'Verkefni 2':
+                member.assignment = None
+                self.redirect(Essay.path)
+        
     def post(self):
         self.require_login()
         
@@ -316,8 +326,10 @@ class Assignment(CustomRequestHandler):
         
 
         if has_enough_data and self.request.get('completed'):
+            #first set next assignment in member
+            self.updateMemberAssignment()
             #redirect to show answers
-            self.redirect(Answer.path)
+            self.redirect(Assignment.path)
             
         elif self.request.get('quit') :
             #the user is logging of for now
