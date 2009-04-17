@@ -1,0 +1,18 @@
+{% extends "index.html" %}
+
+
+{% block title %}{{ block.super }} | Svörin þín{% endblock %}
+{% block content %}
+<h2>{{assignment}}</h2>
+
+Hér eru niðurstöðurnar þínar úr {{assignment}}:
+
+<br><br>
+{% for answer in answers %}
+    <div class="field">    
+    {{answer.answer_number}},
+    {{answer.answer}},
+    </div>
+{% endfor %}
+
+{% endblock %}
