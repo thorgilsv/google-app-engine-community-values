@@ -448,7 +448,9 @@ class Registration(CustomRequestHandler):
         '840', '845', '850', '851', '860', '861', '870', '871', '880', '900',
         '902')
         
-        if not postal_code or postal_code in valid_postal_codes:
+        if not postal_code:
+            self.field_errors['postal_code'] = "Velja þarf póstnúmer."
+        elif postal_code in valid_postal_codes:
             self.clean_data['postal_code'] = postal_code
         else:
             self.field_errors['postal_code'] = "Póstnúmer er ekki rétt."
@@ -498,14 +500,7 @@ class Registration(CustomRequestHandler):
             self.field_errors['age'] = "Aldur er ekki réttur."
         
     def validate_gender(self):
-        gender = self.request.get('gender', '')
-        
-        if not gender:
-            self.clean_data['gender'] = None
-        elif gender in ('kk', 'kvk'):
-            self.clean_data['gender'] = gender
-        else:
-            self.field_errors['gender'] = "Óþekkt snið á kyni."
+        self.clean_data['gender'] = self.request.get('gender', '')
 
 class CookieTest(CustomRequestHandler):
     path = '/cookietest'
