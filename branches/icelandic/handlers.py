@@ -131,7 +131,7 @@ class Assignment(CustomRequestHandler):
     path = '/assignment'
     
     field_count = 10
-    mandatory_field_count = 5
+    mandatory_field_count = 1
     
     def get_default_tuple(self, number):
         #TODO: change from tuple to class for dramatically increased readability
@@ -142,10 +142,12 @@ class Assignment(CustomRequestHandler):
         return [self.get_default_tuple(from_number + number) for number in range(count)]
      
     def addAnswer(self, value, count, assignment):
-        member = self.session.user 
-        answer = value
-        answer_number = count
-        assignment = assignment
+        t = AssignmentAnswer()
+        t.member = session.get_member(self) 
+        t.answer = value
+        t.answer_number = count
+        t.assignment = assignment
+        t.put()
         
     def deleteAssignments(self):        
         q = db.GqlQuery("SELECT * FROM Assignments")
@@ -170,20 +172,42 @@ class Assignment(CustomRequestHandler):
     
     def getAssignment(self,name):
         assignments = Assignments.gql("where name = :1",name)
-        for each in assignments:
-            return each
+        return assignments.get()
+        
+    def getDefaultAssignment(self):
+        member = session.get_member(self)
+        if member.assignment: return member.assignment
+        assignments = Assignments.gql("")
+        return assignments.get()
+        
+    def getAnswers(self,assignment): return AssignmentAnswer.gql("where assignment = :1 and member = :2", assignment, session.get_member(self))
+    
+    def updateUser(self,assignment):
+        member = session.get_member(self)
+        member.assignment = assignment
+        member.put()
+        
     
     def get(self):
         self.require_login()
-        self.deleteAssignments()
-        self.createAssignments()        
+        #self.deleteAssignments()
+        #self.createAssignments()
+        assignment_name = self.request.get('var')
+        if assignment_name: assignment = self.getAssignment(assignment_name)
+        else : assignment = self.getDefaultAssignment()
+
+        self.updateUser(assignment)
+        
+        #start by looking for stored answers
+        answers = self.getAnswers(assignment)
         
         self.render_to_response('assignment.html', {
             'field_values': self.get_field_list(self.field_count),
             'min_values': 5,
             'lvl': 'inner',
             'assignments': self.getAssignments(),
-            'assignment': self.getAssignment(self.request.get('var')),
+            'assignment': assignment,
+            #'answers': answers,
         })
         
     def post(self):
@@ -225,19 +249,24 @@ class Assignment(CustomRequestHandler):
         # Fill up the field_values tuple with empty fields to make up for the
         # ones that were empty or invalid. This way, non-empty fields will be
         # grouped together at the top.
-        
-        #we will always sav the values alreaddy submitted
+        member = session.get_member(self) # session.get_member('assignment')
+        #we will always save the values already submitted        
         count=0
         for value in field_values:
-                if value == None: break
-                count+=1
-                addAnswer(value, count, assignment)
+            #print value
+            if value == None: break
+            count+=1
+            self.addAnswer(value[1], count, member.assignment)
         
         has_enough_data = non_empty_field_count >= self.mandatory_field_count
         
-        if has_enough_data:
-            #TODO: make this a redirect
-            self.response.out.write("The form was valid, and this should be a redirection to the next assignment.")
+        if has_enough_data and self.request.get('completed'):
+            #redirect to show answers
+            self.redirect(Answer.path)
+            
+        elif self.request.get('quit'):
+            #the user is logging of for now
+            self.redirect(Logout.path)
         else:
             field_values += self.get_field_list(self.field_count - non_empty_field_count, from_number=non_empty_field_count)
             
@@ -246,6 +275,24 @@ class Assignment(CustomRequestHandler):
                 'min_values': 5,
                 'lvl': 'inner',
             })
+
+
+class Answer(CustomRequestHandler):
+    path = '/answers'
+    def getAnswers(self):
+        member = session.get_member(self)
+        return AssignmentAnswer.gql("where assignment = :1 and member = :2", member.assignment, member)
+        
+    def getAssignments(self): return Assignments.gql("")
+    
+    def get(self):
+        member = session.get_member(self)
+        self.response.out.write(render_template('answer.html',{
+            'answers': self.getAnswers(),
+            'assignment': member.assignment.name,
+            'assignments': self.getAssignments(),
+            'lvl': 'inner',}))
+
 
 class Activation(CustomRequestHandler):
     """Activate a user that has already signed up."""
@@ -338,6 +385,8 @@ class Registration(CustomRequestHandler):
             temporary_member.gender = self.clean_data['gender']
             temporary_member.activation_key = uuid.uuid4().hex
             temporary_member.put()            
+            session.login(self, t)
+            self.redirect(Assignment.path)
             
             # To reduce the likelyhood of being caught by some SPAM filters, add a name if not empty.
             if temporary_member.name:
@@ -351,18 +400,19 @@ class Registration(CustomRequestHandler):
                     subject="Okkar framtíð: Staðfesting nýskráningar",
                     body="""Kæri viðtakandi,
                     
-Takk fyrir að skrá þig í verkefnið Okkar framtíð.  Þú getur tekið
-þátt í verkefninu með því að smella á tengilinn hér að neðan og
-staðfesta þar með netfangið þitt.
-
-http://%s/activate?activation_key=%s
-
-Takk fyrir þátttökuna,
-Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #TODO: improve writing
-)
+            Takk fyrir að skrá þig í verkefnið Okkar framtíð.  Þú getur tekið
+            þátt í verkefninu með því að smella á tengilinn hér að neðan og
+            staðfesta þar með netfangið þitt.
             
+            http://%s/activate?activation_key=%s
+            
+            Takk fyrir þátttökuna,
+            Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #TODO: improve writing
+            )
+            
+
             self.render_to_response('email_sent.html', {'email': temporary_member.email })
-                        
+
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code').strip()
         
