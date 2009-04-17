@@ -306,7 +306,7 @@ class Assignment(CustomRequestHandler):
             #redirect to show answers
             self.redirect(Answer.path)
             
-        elif self.request.get('foobar') :
+        elif self.request.get('quit') :
             #the user is logging of for now
             self.redirect(Logout.path)
         else:
@@ -367,6 +367,7 @@ class Activation(CustomRequestHandler):
             self.render_to_response('activation.html', {
                 'member': member,
             })
+            
             
         else:
             self.render_to_response('activation.html', {
