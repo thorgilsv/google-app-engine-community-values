@@ -37,7 +37,7 @@ def login(request_handler, member):
     new_session = Session(member=member, session_key=session_key, expiry_time=expiry_time)
     new_session.put()
     
-    request_handler.response.headers['Set-Cookie'] = "session_key=%s" % session_key
+    request_handler.set_cookie('session_key', session_key)
     
 def logout(request_handler):
     """Remove the current user from the session database."""
