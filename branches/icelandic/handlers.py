@@ -347,7 +347,7 @@ class Registration(CustomRequestHandler):
                 to_line = temporary_member.email
             
             # end confirmation email and inform the user of this
-            mail.send_mail(sender="support@hugmyndaraduneytid.is",
+            mail.send_mail(sender=settings.EMAIL_FROM,
                     to=to_line,
                     subject="Okkar framtíð: Staðfesting nýskráningar",
                     body="""Kæri viðtakandi,
