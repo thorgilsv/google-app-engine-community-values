@@ -46,7 +46,7 @@ class AssignmentAnswer(db.Model):
 class Essay(db.Model):
     member = db.ReferenceProperty(Member)
     text = db.TextProperty()
-  
+
 class Session(db.Model):
     session_key = db.StringProperty()
     member = db.ReferenceProperty(Member)
