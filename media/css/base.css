@@ -89,7 +89,7 @@ li {
 	
 }
 
-.navigation a:link {
+.navigation a {
 	display: block;
 	padding: 10px;
 	text-decoration: none;
