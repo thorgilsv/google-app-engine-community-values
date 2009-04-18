@@ -23,6 +23,7 @@ application = webapp.WSGIApplication([
         (Activation.path, Activation),
         (EssayAssignment.path, EssayAssignment),
         (ForgottenPassword.path, ForgottenPassword),
+        (DictionaryProxy.path, DictionaryProxy)
         
     ], debug = True)
 
