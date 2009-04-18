@@ -130,6 +130,9 @@ class DictionaryProxy(CustomRequestHandler):
     path = '/ordabok'
     
     def get(self):
+        self.response.out.write("")
+        return
+        
         api_path = 'http://snara.is/datajson.aspx'
         request_path = '%s?%s' % (api_path, self.request.query_string)
         
