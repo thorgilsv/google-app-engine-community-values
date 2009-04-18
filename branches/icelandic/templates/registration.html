@@ -3,7 +3,11 @@
 {% block front_page %}{% endblock %}
 {% block title %}{{ block.super }} | Nýskráning{% endblock %}
 {% block content %}
-  <link type="text/css" href="/media/css/nyskraning/nyskraning.css" rel="stylesheet" />
+<link type="text/css" href="/media/css/nyskraning/nyskraning.css" rel="stylesheet" />
+<script src="/media/js/jquery-1.3.2.min.js"></script>
+<script src="/media/js/jquery.eutils-1.0.min.js"></script>
+<script src="/media/js/jquery.autovalidate-1.0.min.js"></script>
+<script src="/media/js/nyskraning-init.js"></script>
   
 <h2>Skráið ykkur hér í verkefnið:</h2>
 
@@ -191,7 +195,7 @@
       {{errors.postal_code}}
     </div>
 
-    <!--<div class="fi_sel num_ppl req">
+    <div class="fi_sel num_ppl req">
       <label for="reg_num"><acronym class="req" title="Þarf að fylla út: ">*</acronym>Fjöldi þátttakenda:</label>
       <select id="reg_num" name="num">
         <option></option>
@@ -218,9 +222,9 @@
         <option>18</option>
         <option>19</option>
         <option>20</option>
-
       </select>
-    </div>-->
+    </div>
+
 
     <!-- 
       Hér injectar javascriptið innsláttarreitum með "aldur + kyn" valmöguleikum fyrir alla þátttakendur
@@ -288,7 +292,6 @@
       <label for="reg_pwd2"><acronym class="req" title="Þarf að fylla út: ">*</acronym>Lykilorð aftur:</label>
 
       <input id="reg_pwd2" type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
-      
     </div>
     
     <div class="fi_btn"><input type="submit" value="Skrá þátttakendur" /></div>
