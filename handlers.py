@@ -386,6 +386,13 @@ class Activation(CustomRequestHandler):
     """Activate a user that has already signed up."""
     path = "/activate"
     
+    def updateParticipants(self,tempMember,member):
+        q = Particpant.gql("where temp_member = :1", tempMember)
+        q.get()
+        q.temp_meber = None
+        q.member = member
+        db.put(q)
+    
     def get(self):
         activation_key = self.request.get('activation_key')
         
@@ -412,6 +419,8 @@ class Activation(CustomRequestHandler):
             
             # TODO: make put and delete atomic for integrity
             member.put()
+            
+            self.updateParticipants(temporary_member,member)
             temporary_member.delete()
             
             self.redirect(Assignment.path)
@@ -455,12 +464,18 @@ class Registration(CustomRequestHandler):
                     subject="Framtíðarsýn þjóðar: Gleymt lykilorð",
                     body="""Kæri viðtakandi,
                     
-                            Lykilorð þitt er '%s'
-                            
-                            Takk fyrir þátttökuna,
-                            Hugmyndaráðuneytið""" % member.password.__unicode__()
-                        )       
+                        Lykilorð þitt er '%s'
+                        
+                        Takk fyrir þátttökuna,
+                        Hugmyndaráðuneytið""" % member.password.__unicode__()
+                    )       
         
+    def addAgeGender(tempMember,age,gender):
+        t = Particpant()
+        t.temp_member = tempMember
+        t.age = age
+        t.gender = gender
+        t.put()
         
     def post(self):
         # Data that is ready to be inserted into the database.
@@ -492,7 +507,13 @@ class Registration(CustomRequestHandler):
             temporary_member.gender = self.clean_data['gender']
             temporary_member.postcode = int(self.clean_data['postal_code'])
             temporary_member.activation_key = uuid.uuid4().hex
-            temporary_member.put()                     
+            temporary_member.put()
+            
+            num = self.request.get('num')
+            
+            if num.isdigit():            
+                for each in range(0,int(num)):
+                    self.addAgeGender(tempMember,ages[each],genders[each])
             
             # To reduce the likelyhood of being caught by some SPAM filters, add a name if not empty.
             if temporary_member.name:
