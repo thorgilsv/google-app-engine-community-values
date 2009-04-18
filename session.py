@@ -9,12 +9,11 @@ def get_session(request_handler):
     if 'session_key' in request_handler.request.cookies:
         key = request_handler.request.cookies['session_key']
         sessions = Session.all()
+            
         sessions = sessions.filter('session_key = ', key)
         # TODO: filter out expired sessions
         
-        session = sessions.get()
-        
-        return session
+        return sessions.get()
     else:
         return None
 
@@ -27,17 +26,6 @@ def get_member(request_handler):
         return session.member
     else:
         return None
-        
-def login(request_handler, member):
-    """Log the current requester in as `member`."""
-    logout(request_handler)
-    
-    session_key = uuid.uuid4().hex
-    expiry_time = datetime.now() + timedelta(seconds=settings.SESSION_EXPIRY)
-    new_session = Session(member=member, session_key=session_key, expiry_time=expiry_time)
-    new_session.put()
-    
-    request_handler.set_cookie('session_key', session_key)
     
 def logout(request_handler):
     """Remove the current user from the session database."""
@@ -47,3 +35,14 @@ def logout(request_handler):
 
     if session:
         session.delete()
+        
+def login(request_handler, member):
+    """Log the current requester in as `member`."""
+    logout(request_handler)
+    
+    session_key = uuid.uuid4().hex
+    expiry_time = datetime.now() + timedelta(seconds=settings.SESSION_EXPIRY)
+    new_session = Session(member=member, session_key=session_key, expiry_time=expiry_time)
+    new_session.put()
+
+    request_handler.set_cookie('session_key', session_key)

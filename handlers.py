@@ -18,6 +18,10 @@ class CustomRequestHandler(webapp.RequestHandler):
     processing capabilities.
     """
     
+    def get_member(self):
+        session.get_member(self)
+    member = property(get_member)
+    
     def set_cookie(self, key, value):
         """Send an HTTP header that sets a user's cookie."""
         self.response.headers['Set-Cookie'] = "%s=%s" % (key, value)
@@ -36,6 +40,8 @@ class CustomRequestHandler(webapp.RequestHandler):
     def require_login(self):
         """Redirect to login if there's no active session."""
         #TODO: little time, but would be cooler as a decorator  
+        self.response.out.write('hi')
+        
         if not session.get_session(self):
             self.redirect(Login.path)
     
@@ -147,6 +153,8 @@ class EssayAssignment(CustomRequestHandler):
             'essay': self.get_member_essay()
         })
         
+        
+        
     def post(self):
         existing_essay = self.get_member_essay()
         if existing_essay:
@@ -157,12 +165,10 @@ class EssayAssignment(CustomRequestHandler):
         
         essay_text = self.request.get('essay_text')
         
-        if essay_text:
-            essay.text = essay_text
-            essay.put()
-            self.render_to_response("thanks.html")
-        else:
-            self.redirect(self.path)
+        essay.text = essay_text
+        essay.put()
+        
+        self.render_to_response("thanks.html")
 
 class Assignment(CustomRequestHandler):
     #TODO: require login
@@ -255,12 +261,16 @@ class Assignment(CustomRequestHandler):
             self.redirect(Assignment.path)
         elif member.assignment.name == 'Verkefni 2':
             self.updateUser(None)
-            self.redirect(Essay.path)
+            self.redirect(EssayAssignment.path)
         
     def get(self):
-        self.require_login()
-                
-        member = session.get_member(self)
+        
+        member = self.member
+        
+        if not member:
+            self.redirect(Login.path)
+            return
+        
         #self.createAssignments()
         assignment_name = self.request.get('var')
         
@@ -293,7 +303,9 @@ class Assignment(CustomRequestHandler):
     
         
     def post(self):
-        self.require_login()
+        if not self.member:
+            self.redirect(Login.path)
+            return
         
         #TODO: fix undercommenting
         field_values = []
@@ -373,7 +385,10 @@ class Answer(CustomRequestHandler):
     def getAssignments(self): return Assignments.gql("order by date asc")
     
     def get(self):
-        self.require_login()
+        if not self.member:
+            self.redirect(Login.path)
+            return
+            
         member = session.get_member(self)
         self.response.out.write(render_template('answer.html',{            
             'assignments': self.getAssignments(),
@@ -423,6 +438,7 @@ class Activation(CustomRequestHandler):
             self.updateParticipants(temporary_member,member)
             temporary_member.delete()
             
+            session.login(self, member)
             self.redirect(Assignment.path)
         else:
             self.render_to_response('activation.html', {
@@ -461,14 +477,15 @@ class Registration(CustomRequestHandler):
         
         mail.send_mail(sender=settings.EMAIL_FROM,
                     to=email,
-                    subject="Framtíðarsýn þjóðar: Gleymt lykilorð",
-                    body="""Kæri viðtakandi,
+                    subject=u"Framtíðarsýn þjóðar: Gleymt lykilorð",
+                    body=u"""Kæri viðtakandi,
                     
-                        Lykilorð þitt er '%s'
-                        
-                        Takk fyrir þátttökuna,
-                        Hugmyndaráðuneytið""" % member.password.__unicode__()
-                    )       
+                            Lykilorð þitt er '%s'
+                            
+                            Takk fyrir þátttökuna,
+                            Hugmyndaráðuneytið""" % member.password
+                        )       
+
         
     def addAgeGender(tempMember,age,gender):
         t = Particpant()
@@ -503,17 +520,12 @@ class Registration(CustomRequestHandler):
             temporary_member.name = self.clean_data['name']
             temporary_member.password = self.clean_data['password']
             temporary_member.email = self.clean_data['email']  
-            temporary_member.age = self.clean_data['age']
-            temporary_member.gender = self.clean_data['gender']
             temporary_member.postcode = int(self.clean_data['postal_code'])
             temporary_member.activation_key = uuid.uuid4().hex
             temporary_member.put()
-            
-            num = self.request.get('num')
-            
-            if num.isdigit():            
-                for each in range(0,int(num)):
-                    self.addAgeGender(tempMember,ages[each],genders[each])
+              
+            for age, gender in self.clean_data['participants']:
+                self.addAgeGender(tempMember, age, gender)
             
             # To reduce the likelyhood of being caught by some SPAM filters, add a name if not empty.
             if temporary_member.name:
@@ -524,8 +536,8 @@ class Registration(CustomRequestHandler):
             # end confirmation email and inform the user of this
             mail.send_mail(sender=settings.EMAIL_FROM,
                     to=to_line,
-                    subject="Framtíðarsýn þjóðar: Staðfesting nýskráningar",
-                    body="""Kæri viðtakandi,
+                    subject=u"Framtíðarsýn þjóðar: Staðfesting nýskráningar",
+                    body=u"""Kæri viðtakandi,
                     
             Takk fyrir að skrá þig í verkefnið Framtíðarsýn þjóðar.  Þú getur tekið
             þátt í verkefninu með því að smella á tengilinn hér að neðan og
@@ -611,17 +623,27 @@ class Registration(CustomRequestHandler):
         else:
             self.field_errors['password_confirm'] = "Lykilorðin þurfa að vera eins."
             
-    def validate_age(self):
-        age = self.request.get('age').strip()
-        if not age:
-            self.clean_data['age'] = None
-        elif age.isdigit():
-            self.clean_data['age'] = int(age)
-        else:
-            self.field_errors['age'] = "Aldur er ekki réttur."
+    def validate_ages_and_genders(self):
+        count = self.request.get('num')
         
-    def validate_gender(self):
-        self.clean_data['gender'] = self.request.get('gender', '')
+        if count.isdigit():
+            count = int(count)
+        else:
+            return
+
+        self.clean_data['participants'] = []
+        for field_number in range(count):
+            reg_gender = 'reg_gender%d' % field_number
+            reg_age = ('reg_age%d' % field_number).strip()
+            
+            if not reg_gender in ('kvk', 'kk'):
+                continue
+                
+            if not reg_age.isdigit():
+                continue
+            
+            if reg_gender and reg_age:
+                self.clean_data['participants'] += [(reg_gender, reg_age)]
 
 class CookieTest(CustomRequestHandler):
     path = '/cookietest'
@@ -633,13 +655,8 @@ class CookieTest(CustomRequestHandler):
 class Login(CustomRequestHandler):
     path = '/login'
     
-    def get(self):
-        # TODO: do cookie support check
-        
-        self.render_to_response('login.html',{
-            'show_info_links': True,
-            'user': session.get_member(self)
-        })
+    def get(self):        
+        self.redirect(Registration.path)
                 
     def post(self):
         email = self.request.get('email')
