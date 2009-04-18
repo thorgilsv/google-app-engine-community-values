@@ -294,13 +294,13 @@
       
   <h2>Gleymt lykilorð:</h2>
   <p class="reqnote">Sláið inn netfang og við sendum þér lykilorðið.</p>
-  <form method="post">
+  <form method="post" action="/forgot_password">
       <div class="fi_txt fi_email req">
-      <label for="reg_email"><acronym class="req" title="Þarf að fylla út: ">*</acronym>Netfang hópsins:</label>
-      <input id="reg_email" type="text" name="gleymt_email" value="{{ previous.email }}" />
+      <label for="forgotten_email"><acronym class="req" title="Þarf að fylla út: ">*</acronym>Netfang hópsins:</label>
+      <input id="forgotten_email" type="text" name="forgotten_email" value="{{ previous.email }}" />
       {{ errors.email }}
     </div>
-      <div class="fi_btn"><input type="submit" name="gleymt" value="Gleymt lykilorð?" /></div>
+      <div class="fi_btn"><input type="submit" name="send_password" value="Gleymt lykilorð" /></div>
 
 </form>
 {% endblock %}

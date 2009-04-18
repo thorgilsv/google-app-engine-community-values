@@ -414,12 +414,48 @@ class Answer(CustomRequestHandler):
             }))
         
 class ForgottenPassword(CustomRequestHandler):
-    path = '/password_sent'
+    path = '/forgot_password'
+    
+    def sendForgottenPassword(self,email):
+        q = Member.gql("where email = :1", email)
+        member = q.get()
+                    
+        if not member:
+            return None
+        
+        mail.send_mail(sender=settings.EMAIL_FROM,
+                    to=email,
+                    subject=u"Framtíðarsýn þjóðar: Gleymt lykilorð",
+                    body=u"""Kæri viðtakandi,
+                    
+                            Lykilorð þitt er '%s'.
+                            
+                            Takk fyrir þátttökuna,
+                            Hugmyndaráðuneytið""" % member.password)
+                            
+        return True
 
+    def post(self):
+        email = self.request.get('forgotten_email')
+        
+        if not email:
+            self.render_to_response('password_sent.html', {
+                'is_missing_email': True,
+            })
+        if self.sendForgottenPassword(email):
+            self.render_to_response('password_sent.html', {
+                'email': email,
+            })
+        else:
+            self.render_to_response('password_sent.html', {
+                'email': email,
+                'is_invalid_email': True,
+            })
+            
     def get(self):
-        self.response.out.write(render_template('password_sent.html',{   
-            'user': session.get_member(self)
-            }))
+        self.redirect(Registration.path)
+        
+        
 
 class Activation(CustomRequestHandler):
     """Activate a user that has already signed up."""
@@ -488,25 +524,7 @@ class Registration(CustomRequestHandler):
         else:
             self.render_to_response('registration.html', {
                 'is_front_page': True,
-            })
-    
-    def sendForgottenPassword(self,email):
-        q = Member.gql("where email = :1", email)
-        member = q.get()
-                    
-        if not member: return
-        # send password in email
-        
-        mail.send_mail(sender=settings.EMAIL_FROM,
-                    to=email,
-                    subject=u"Framtíðarsýn þjóðar: Gleymt lykilorð",
-                    body=u"""Kæri viðtakandi,
-                    
-                            Lykilorð þitt er '%s'
-                            
-                            Takk fyrir þátttökuna,
-                            Hugmyndaráðuneytið""" % member.password
-                        )       
+            })  
 
         
     def add_participant(self,tempMember,age,gender):
@@ -517,9 +535,7 @@ class Registration(CustomRequestHandler):
         t.put()
         
     def post(self):
-        if self.request.get('gleymt'):
-            self.sendForgottenPassword(self.request.get('gleymt_email'))
-            self.redirect(ForgottenPassword)
+
         # Data that is ready to be inserted into the database.
         self.clean_data = {}
         
