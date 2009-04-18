@@ -28,7 +28,9 @@ class Member(db.Model):
     assignment = db.ReferenceProperty(Assignments) 
     
 class Particpant(db.Model):
+    date = db.DateTimeProperty(auto_now_add=True)
     member = db.ReferenceProperty(Member)
+    temp_member = db.ReferenceProperty(TempMember)
     age = db.IntegerProperty()
     gender = db.StringProperty()
     
