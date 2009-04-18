@@ -5,6 +5,7 @@ import operator
 
 from google.appengine.ext import webapp
 from google.appengine.api import mail
+from google.appengine.api.urlfetch import fetch
 from util import render_template
 import sha, random
 from database import *
@@ -124,6 +125,21 @@ class Participation(CustomRequestHandler):
     
     def get(self):
         self.render_to_response('participation.html',{'show_info_links': True})
+
+class DictionaryProxy(CustomRequestHandler):
+    path = '/ordabok'
+    
+    def get(self):
+        api_path = 'http://snara.is/datajson.aspx'
+        request_path = '%s?%s' % (api_path, self.request.query_string)
+        
+        response = fetch(request_path)
+        
+        # Replicate headers sent by snara.is.
+        for name, value in response.headers.items():
+            self.response.headers[name] = value
+            
+        self.response.out.write(response.content)
 
 class EssayAssignment(CustomRequestHandler):
     path = '/essay'
