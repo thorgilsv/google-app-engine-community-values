@@ -19,7 +19,7 @@ class CustomRequestHandler(webapp.RequestHandler):
     """
     
     def get_member(self):
-        session.get_member(self)
+        return session.get_member(self)
     member = property(get_member)
     
     def set_cookie(self, key, value):
@@ -36,14 +36,6 @@ class CustomRequestHandler(webapp.RequestHandler):
         request_context.update(context)
         
         self.response.out.write(render_template(template_name, context=request_context))
-    
-    def require_login(self):
-        """Redirect to login if there's no active session."""
-        #TODO: little time, but would be cooler as a decorator  
-        self.response.out.write('hi')
-        
-        if not session.get_session(self):
-            self.redirect(Login.path)
     
     def run_prefixed_methods(self, prefix, *args, **kwargs):
         """
@@ -402,11 +394,11 @@ class Activation(CustomRequestHandler):
     path = "/activate"
     
     def updateParticipants(self,tempMember,member):
-        q = Particpant.gql("where temp_member = :1", tempMember)
-        q.get()
-        q.temp_meber = None
-        q.member = member
-        db.put(q)
+        participants = Particpant.gql("where temp_member = :1", tempMember)
+        for participant in participants:
+            participant.temp_member = None
+            participant.member = member
+            participant.put()
     
     def get(self):
         activation_key = self.request.get('activation_key')
@@ -459,14 +451,12 @@ class Registration(CustomRequestHandler):
         self.run_prefixed_methods('validate_', *args, **kwargs)
         
     def get(self):
-        if session.get_member(self):
+        if self.member:
             self.redirect(Assignment.path)
         else:
             self.render_to_response('registration.html', {
-                    'members': self.get_members(),                
-                })
-        
-    def get_members(self): return Member.gql("order by date desc")
+                'is_front_page': True,
+            })
     
     def sendForgottenPassword(self,email):
         q = Member.gql("where email = :1", email)
@@ -487,10 +477,10 @@ class Registration(CustomRequestHandler):
                         )       
 
         
-    def addAgeGender(tempMember,age,gender):
+    def add_participant(self,tempMember,age,gender):
         t = Particpant()
         t.temp_member = tempMember
-        t.age = age
+        t.age = int(age)
         t.gender = gender
         t.put()
         
@@ -525,7 +515,7 @@ class Registration(CustomRequestHandler):
             temporary_member.put()
               
             for age, gender in self.clean_data['participants']:
-                self.addAgeGender(tempMember, age, gender)
+                self.add_participant(temporary_member, age, gender)
             
             # To reduce the likelyhood of being caught by some SPAM filters, add a name if not empty.
             if temporary_member.name:
@@ -633,18 +623,22 @@ class Registration(CustomRequestHandler):
 
         self.clean_data['participants'] = []
         for field_number in range(count):
-            reg_gender = 'reg_gender%d' % field_number
-            reg_age = ('reg_age%d' % field_number).strip()
+            gender_tag = 'gender_%d' % field_number
+            age_tag = ('age_%d' % field_number).strip()
             
-            if not reg_gender in ('kvk', 'kk'):
+            gender = gender_tag in self.request.POST and self.request.POST[gender_tag]
+            age = age_tag in self.request.POST and self.request.POST[age_tag]
+            
+            if not gender in ('kvk', 'kk'):
                 continue
                 
-            if not reg_age.isdigit():
+            if not age.isdigit():
+                print "not digit"
                 continue
             
-            if reg_gender and reg_age:
-                self.clean_data['participants'] += [(reg_gender, reg_age)]
-
+            if gender and age:
+                self.clean_data['participants'] += [(age, gender)]
+                
 class CookieTest(CustomRequestHandler):
     path = '/cookietest'
     
