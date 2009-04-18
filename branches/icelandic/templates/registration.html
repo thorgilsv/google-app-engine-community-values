@@ -287,8 +287,20 @@
       <input id="reg_pwd2" type="password" name="password_confirm" value="{{ previous.password_confirm }}" />
     </div>
     
-    <div class="fi_btn"><input type="submit" value="Skrá þátttakendur" /></div>
-    <div class="fi_btn"><input type="submit" name="gleymt" value="Gleymt lykilorð?" /></div>
+    <div class="fi_btn"><input type="submit" value="Skrá þátttakendur" /></div>   
+
+</form>
+      
+      
+  <h2>Gleymt lykilorð:</h2>
+  <p class="reqnote">Sláið inn netfang og við sendum þér lykilorðið.</p>
+  <form method="post">
+      <div class="fi_txt fi_email req">
+      <label for="reg_email"><acronym class="req" title="Þarf að fylla út: ">*</acronym>Netfang hópsins:</label>
+      <input id="reg_email" type="text" name="gleymt_email" value="{{ previous.email }}" />
+      {{ errors.email }}
+    </div>
+      <div class="fi_btn"><input type="submit" name="gleymt" value="Gleymt lykilorð?" /></div>
 
 </form>
 {% endblock %}
