@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-
 {% block title %}{{ block.super }} | Verkefni {{ assignment.number }}{% endblock %}
 
 {% block header %}
@@ -17,14 +16,9 @@
 </div>
 {% endblock %}
 {% block content %}
-<h1>{{ assignment.name }}</h1>
-
 <link type="text/css" href="/media/css/konnun/konnun.css" rel="stylesheet" />
 
-
-<span style="font-size:120%;color:#FF9900;font-weight:bold">
-    {{ assignment.question }}
-</span>
+<h1 style="color:#f90;">{{ assignment.question }}</h1>
   
 {%if is_essay%}
 
@@ -33,8 +27,8 @@
     Að lokum viljum við bjóða ykkur að segja ykkar skoðun. Hér má skrifa hvað sem ykkur langar. Til dæmis ritgerð um dag í lífi ykkar í framtíðinni, blogg úr framtíðinni, skoðun ykkar á verkefninu, þjóðfélaginu eða hverju sem er. Orðið er frjálst.
 </p>
 
-<form method="post">
-<textarea style="width: 95%; height: 15em;" name="essay_text">{{ essay.text }}</textarea>
+<form method="post" name="value_form">
+<textarea style="width: 95%; height: 25em;" name="essay_text">{{ essay.text }}</textarea>
 <input type="submit" name="completed" value="Ljúka við verkefni" />
 </form>
 
@@ -53,9 +47,6 @@
 <p>Ræðið það á milli ykkar og veljið út frá því að minnsta kosti fimm stök orð og í mesta lagi tíu sem best lýsa því sem ykkur finnst. Það má bara setja eitt orð í hvern reit.</p>
 <p>Þegar smellt er með músinni á reitina opnast gluggi með valmöguleikum. Valmöguleikarnir eru til að segja hver staðan er í dag, hvert þið teljið að við stefnum miðað við núverandi áherslur og að síðustu hver væri óska staðan í framtíðinni. Það eru ekki beinir mælikvarðar á stikunum heldur eigið þið að nota ykkar tilfinningu til að stilla þá. Ef þið viljið svo bæta við upplýsingum er innsláttarreitur þar sem hægt er að skrifa stuttan texta.</p>
 <p>Við viljum líka að þið raðið orðunum eftir mikilvægi og það er hægt að endurraða listanum með því annars vegar að smella á upp og niður örvarnar til hliðar við hvern reit eða draga reitina með því að smella beint á þá með músinni, halda inni takkanum og draga upp eða niður.</p>
-
-<p class="reqnote">{{ user.assignment.name }}Reiti merkta með <acronym class="req" title="Þarf að fylla út: ">*</acronym> þarf að fylla út.</p>
-
 
 <form method="post">
     <div class="words">
