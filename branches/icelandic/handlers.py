@@ -245,20 +245,35 @@ class Assignment(CustomRequestHandler):
             tuple_list.append((answer.answer_number, answer.statement, answer.current_state, answer.headed_state, answer.ideal_state, answer.comment))
         
         return tuple_list
+    
+    def updateMemberAssignment(self):
+        member = session.get_member(self)
+        if member.assignment == None:
+            self.redirect(Logout.path)
+        if member.assignment.name == 'Verkefni 1':
+            self.updateUser( self.getAssignment('Verkefni 2'))
+            self.redirect(Assignment.path)
+        elif member.assignment.name == 'Verkefni 2':
+            member.assignment = None
+            self.redirect(Essay.path)
         
     def get(self):
         self.require_login()
+        member = session.get_member(self)
+        #self.createAssignments()
         assignment_name = self.request.get('var')
-        if assignment_name:
-            assignment = self.getAssignment(assignment_name)
-        else:
-            assignment = self.getDefaultAssignment()
+        #if member.assignment != None:
+        assignment = self.getAssignment(member.assignment.name)
+        #elif assignment_name or member:
+        #    assignment = self.getAssignment(assignment_name)
+        #else:
+        #    assignment = self.getDefaultAssignment()
             
         self.updateUser(assignment)
         
         #TODO fill inn stored answers
         answers = self.getAnswers(assignment)
-        member = session.get_member(self)
+        
         assignment_answers = AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", member.assignment, member)
         field_values = self.get_answer_tuples(assignment_answers)
         
@@ -274,15 +289,7 @@ class Assignment(CustomRequestHandler):
             'user': session.get_member(self),
         })
         
-        def updateMemberAssignment(self, member):
-            if member.assignment == None:
-                self.redirect(Logout.path)
-            if member.assignment.name == 'Verkefni 1':
-                member = getAssignment('Verkefni 2')
-                self.redirect(Assignment.path)
-            elif member.assignment.name == 'Verkefni 2':
-                member.assignment = None
-                self.redirect(Essay.path)
+    
         
     def post(self):
         self.require_login()
@@ -347,9 +354,7 @@ class Assignment(CustomRequestHandler):
         if has_enough_data and self.request.get('completed'):
             #first set next assignment in member
             self.updateMemberAssignment()
-            #redirect to show answers
-            self.redirect(Assignment.path)
-            
+                        
         elif self.request.get('quit') :
             #the user is logging of for now
             self.redirect(Logout.path)
@@ -411,7 +416,7 @@ class Activation(CustomRequestHandler):
             self.redirect(Assignment.path)
         else:
             self.render_to_response('activation.html', {
-                'error': "Þessi þessi staðfestingartengill er ekki virkur.  Vinsamlega reyndu nýskráningu að nýju.",
+                'error': "Þessi staðfestingartengill er ekki virkur.  Vinsamlega reyndu nýskráningu að nýju.",
             })
         
 class Registration(CustomRequestHandler):
@@ -511,7 +516,7 @@ class Registration(CustomRequestHandler):
             )
             
 
-            self.render_to_response('email_sent.html', {'email': temporary_member.email })
+            self.render_to_response('email_sent.html', {'email': temporary_member.activation_key })
 
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code').strip()
