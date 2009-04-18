@@ -254,27 +254,28 @@ class Assignment(CustomRequestHandler):
             self.updateUser( self.getAssignment('Verkefni 2'))
             self.redirect(Assignment.path)
         elif member.assignment.name == 'Verkefni 2':
-            member.assignment = None
+            self.updateUser(None)
             self.redirect(Essay.path)
         
     def get(self):
         self.require_login()
+                
         member = session.get_member(self)
         #self.createAssignments()
         assignment_name = self.request.get('var')
-        #if member.assignment != None:
-        assignment = self.getAssignment(member.assignment.name)
-        #elif assignment_name or member:
-        #    assignment = self.getAssignment(assignment_name)
-        #else:
-        #    assignment = self.getDefaultAssignment()
+        
+        if assignment_name:
+            assignment = self.getAssignment(assignment_name)
+        elif member.assignment:
+            assignment = self.getAssignment(member.assignment.name)
+        else: assignment = self.getDefaultAssignment()
             
         self.updateUser(assignment)
         
         #TODO fill inn stored answers
         answers = self.getAnswers(assignment)
         
-        assignment_answers = AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", member.assignment, member)
+        assignment_answers = AssignmentAnswer.gql("where assignment = :1 and member = :2 order by answer_number asc", assignment, member)
         field_values = self.get_answer_tuples(assignment_answers)
         
         non_empty_field_count = assignment_answers.count()
