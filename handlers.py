@@ -387,7 +387,14 @@ class Answer(CustomRequestHandler):
             'answers': self.getAnswers(),
             'user': session.get_member(self)
             }))
+        
+class ForgottenPassword(CustomRequestHandler):
+    path = '/password_sent'
 
+    def get(self):
+        self.response.out.write(render_template('password_sent.html',{   
+            'user': session.get_member(self)
+            }))
 
 class Activation(CustomRequestHandler):
     """Activate a user that has already signed up."""
@@ -485,6 +492,9 @@ class Registration(CustomRequestHandler):
         t.put()
         
     def post(self):
+        if self.request.get('gleymt'):
+            sendForgottenPassword(self.request.get('gleymt_email'))
+            self.redirect(ForgottenPassword)
         # Data that is ready to be inserted into the database.
         self.clean_data = {}
         
