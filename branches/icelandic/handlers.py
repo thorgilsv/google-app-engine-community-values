@@ -493,7 +493,7 @@ class Registration(CustomRequestHandler):
         
     def post(self):
         if self.request.get('gleymt'):
-            sendForgottenPassword(self.request.get('gleymt_email'))
+            self.sendForgottenPassword(self.request.get('gleymt_email'))
             self.redirect(ForgottenPassword)
         # Data that is ready to be inserted into the database.
         self.clean_data = {}
