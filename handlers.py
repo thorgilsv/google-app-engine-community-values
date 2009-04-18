@@ -359,6 +359,15 @@ class Assignment(CustomRequestHandler):
                 field_values.append((field_order,) + fields_tuple)
         
         field_values = sorted(field_values, key=operator.itemgetter(0))
+        
+        # change 1, 3, 7 as first values in sorted tuple to 1, 2, 3
+        sequential_field_values = []
+        counter = 1
+        for field in field_values:
+            sequential_field_values.append((counter,) + field[1:])
+            counter += 1
+            
+        field_values = sequential_field_values
                 
         non_empty_field_count = len(field_values)
         
