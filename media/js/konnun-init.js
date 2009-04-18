@@ -4,7 +4,16 @@ jQuery(function($){
 
 
   $('body').addClass('js-active');
-  $(':submit').each(function(){ this.value += ' >'; });
+  $(':submit').each(function(){
+      if ($(this).closest('.back').length)
+      {
+        this.value = '< '+this.value;
+      }
+      else
+      {
+        this.value += ' >';
+      }
+    });
 
 
   var UP = 38,
@@ -63,11 +72,12 @@ jQuery(function($){
   wordCont
       .attr('type', '1')
       .sortable({
+          handle: 'h3, .word, .mover',
           cursor: 'move',
-          cursorAt: {
+          /*cursorAt: {
               left: 20,
               top:  20
-            },
+            },*/
           distance: 10
         })
       .bind('sortupdate', reorder);
@@ -104,6 +114,38 @@ jQuery(function($){
 
 
   $('.word input', wordCont)
+      .bind('keypress', function (e) {
+          return e.which != 32;
+        })
+      .bind('change', function (e) {
+          var value = this.value,
+              i = value.length,
+              errMsg;
+          if (/\s/.test(value))
+          {
+            errMsg = 'Vinsmlega sláðu bara inn eitt orð í hvern reit';
+          }
+          else
+          {
+            while (i--)
+            {
+              var chr = value.charAt(i);
+              if ( chr.toUpperCase() != chr.toLowerCase()  &&  chr != '-' )
+              {
+                errMsg = 'Vinsamlega notaðu bara venjulega bókstafi';
+                break;
+              }
+            }
+          }
+          if (errMsg)
+          {
+            var _this = $(this);
+            setTimeout(function(){
+                _this.trigger('focus')[0];
+              }, 0);
+          }
+
+        })
       .autocomplete(
           '/ordabok',
           //'Indíukirsuber,Epli,Apríkósur,Asískar perur,Lárperur,Banani,Bananamelónur,Bláber,Brómber,Brauðávöxtur,Kaktusfíkja,Stjörnuávöxtur,Kirsuber,Trönuber,Rifsber,Sólber,Morgunberkja,Döðlur,Blá hindber,Drekaávöxtur,Dáraaldin,Ylliber,Fíkjur,Garðaber,Stikilsber,Greipaldin,Guava,Hunangs melóna,Saðningaraldin,Jujube,Kantalúpmelónur,Kívanó,Kíví (loðber),Dvergappelsína,kúmkvat,Sítrónur,Súraldin;límónur,Litkaber,Loganber,Longan,Dúnepli,Loquat,Mandarínur,Mangó,Mangosteen,Svört mórber,Nektarínur,Ólífur,Appelsínur,Appelsínur beiskar,Papaja,Ástaraldin,Píslaraldin,Ferskjur,Perur,Pepino,Döðluplóma,Mjölbananar,Plómur,Ananas,Pómelóaldin,Granatepli,Kveði,Rúsínur,Rambútan,Hindber,Jarðaber,Vínber,Tamarind,Tamarillo,Ugli,Vatnsmelónur,Grænmeti og fl.,Akorn grasker,Túnætisveppur,Spergill,Aspas,Eggaldin,Rauðrófur,Blaðbeðja (strandblaðka),Blue hubbard grasker,Kóngssveppur,Spergilkál,Rósakál,Buttercup grasker,Barbapabba grasker,Hvítkál,Fingrakornblóm,Carnival grasker,Gulrætur,Blómkál,Hnúðselja,sellerírót,Stilkselja,Sellerí,Ætisveppur,Kínakál,Kúrbítur af graskeraættDvergbítur,Agúrkur,Delicata grasker,Vetrarsalat,Fennika(sígóð),Hvítlaukur,Þrúgugúrkur,Ætiþistill,Höfuðkál,Humall,Piparrót,Íssalat,Ætifífill,Grænkál,Hnúðkál,Blaðlaukur,Laukur,Nípa,Steinseljurót,Paprikur,Kartöflur,Pumpkin grasker,Hreðkur (radísur),Red kuri grasker,Red turban grasker,Rabarbari,Hafursrót,Skalottlaukur (askalonlaukur),Spagettí grasker,Spínat,Perlulaukur,Maís,Korn,Maískólfar,Sætuhnúðar,sætar kartöflur,Gulrófur,Sweet dumpling grasker,Tómatar,Næpur,Kínakartöflur,Kryddjurtir,Kerfill,Graslaukur,Blaðselja,Karsi (garðperla),Vatnakarsi,Vorsalat,Steinselja,Jólasalat,Hnetur,Möndlur,Brasilíuhnetur,Kasúhnetur,Kastaníu hnetur,Kókoshnetur,Heslihnetur,Makademía hnetur,Pekan hnetur,Jarðhnetur,Furu hnetur,Pistasíu hnetur (hjartaaldin),Valhnetur,Krydd,Kúmenfræ,Einiber,Múskat,Pipar svartur og hvítur,Vanillufræ,Fræ,Baðmullarfræ,Hörfræ,Sinnepsfræ,Ertur (án fræbelgs),Ertur (með fræbelg),Valmúafræ (birki),Repjufræ,Sesamfræ,Sólblómafræ,Baunir,Rauðar nýrnabaunir,Adúkí baunir,Anasasí baunir,Boston baunir,Kjúklingabaunir,Fava baunir,Límabaunir,Smjörbaunir,Pintó baunir,Sojabaunir'.split(','),
@@ -131,7 +173,6 @@ jQuery(function($){
                   selElm.val( ui.value );
                   valElm.text( $('option[selected]', selElm).text() );
                 };
-          ;;;window.console&&console.log( selElm.val(),  startVal );
           var valElm  = $('<span class="value" />').insertAfter( selElm )
           $('<span />')
               .slider({
