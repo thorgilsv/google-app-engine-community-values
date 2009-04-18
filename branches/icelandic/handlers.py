@@ -132,6 +132,9 @@ class EssayAssignment(CustomRequestHandler):
         return Essay.gql('WHERE member = :1', session.get_member(self)).get()
     
     def get(self):
+        member = self.member
+        member.assignment = None
+        member.put()
         
         assignment = {
             'name': 'Verkefni 3',
@@ -232,11 +235,7 @@ class Assignment(CustomRequestHandler):
     
     def get_current_assignment(self):
         return self.getAssignment(self.request.get('var'))
-        
-    def updateUser(self,assignment):
-        member = session.get_member(self)
-        member.assignment = assignment
-        member.put()
+    
         
     def get_answer_tuples(self, answers):
         
@@ -246,21 +245,6 @@ class Assignment(CustomRequestHandler):
             tuple_list.append((answer.answer_number, answer.statement, answer.current_state, answer.headed_state, answer.ideal_state, answer.comment))
         
         return tuple_list
-    
-    def updateMemberAssignment(self, next=True):
-        member = session.get_member(self)
-        
-        if not member.assignment:
-            self.redirect(Logout.path)
-        if member.assignment.name == 'Verkefni 1':
-            if next:
-                self.updateUser(self.getAssignment('Verkefni 2'))
-            else:
-                self.updateUser(self.getAssignment('Verkefni 1'))
-            self.redirect(Assignment.path)
-        elif member.assignment.name == 'Verkefni 2':
-            self.updateUser(None)
-            self.redirect(EssayAssignment.path)
         
     def get(self):
         
@@ -271,19 +255,19 @@ class Assignment(CustomRequestHandler):
             return
         
         #self.createAssignments()
-        assignment_name = self.request.get('var')
+        requested_assignment = self.request.get('var')
         
-        if assignment_name:
-            assignment = self.getAssignment(assignment_name)
-        elif member.assignment:
-            assignment = self.getAssignment(member.assignment.name)
+        if requested_assignment:
+            assignment = self.getAssignment(requested_assignment)
         else:
-            assignment = self.getDefaultAssignment()
-        
-        if not assignment:
-            self.redirect(self.path)
+            if member.assignment:
+                assignment = member.assignment
+            else:
+                self.redirect(EssayAssignment.path)
+                return
             
-        self.updateUser(assignment)
+        member.assignment = assignment
+        member.put()
         
         #TODO fill inn stored answers
         answers = self.getAnswers(assignment)
@@ -508,7 +492,7 @@ class Activation(CustomRequestHandler):
             temporary_member.delete()
             
             session.login(self, member)
-            self.redirect(Assignment.path)
+            self.redirect(Assignment.path + '?var=Verkefni%201')
         else:
             self.render_to_response('activation.html', {
                 'error': "Þessi staðfestingartengill er ekki virkur.  Vinsamlega reyndu nýskráningu að nýju.",
