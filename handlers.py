@@ -523,7 +523,7 @@ class Registration(CustomRequestHandler):
             )
             
 
-            self.render_to_response('email_sent.html', {'email': temporary_member.activation_key })
+            self.render_to_response('email_sent.html', {'email': temporary_member.email })
 
     def validate_postal_code(self):
         postal_code = self.request.get('postal_code').strip()
