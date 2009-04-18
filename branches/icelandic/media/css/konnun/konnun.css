@@ -7,11 +7,9 @@
   _height:0;~min-height:0; /* ie hasLayout fix */
 }
 
-
 fieldset {
   border: none;
   background-color: #fff;
-  cursor: move;
   padding: 5px 10px;
   margin: 0;
   color: #666;
@@ -21,10 +19,14 @@ fieldset:after { display:block; clear:both; content:"."; visibility:hidden; font
 
 fieldset:hover,
 fieldset.open {
-  background-color: #f2fafd;
+  /* old bgcolor: #f2fafd*/
+  background-color: #e9f1f8;
+}
+fieldset.open {
+  padding-top: 10px;
 }
 fieldset.ui-sortable-helper {
-  background-color: #f2fafd;
+  background-color: #e9f1f8;
   opacity: .75;
   filter: alpha(opacity=75);
 }
@@ -33,6 +35,12 @@ fieldset.ui-sortable-placeholder {
 }
 
 .js-active legend { display: none; }
+.js-active fieldset h3,
+.js-active .word,
+.js-active .mover { cursor: move; }
+.js-active .order { display: none; }
+
+
 
 fieldset h3 { /* <legend> replacement */
   font-size: 1.17em;
@@ -44,28 +52,21 @@ fieldset h3 { /* <legend> replacement */
 }
 
 
-.eval {
-  margin: 10px 7% 10px 1.76em;
-  padding-left: 10px;
-  _height:0;~min-height:0; /* ie hasLayout fix */
-}
-.eval:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
-
-.js-active .eval { display: none; }
-.js-active .order { display: none; }
 
 
+select,
 textarea,
 .fi_txt input {
+  font-family: verdana,tahoma,helvetica,arial;
   font-size: 1em;
   background: #fff;
-  border: 1px solid #fcd39f;
+  border: 2px solid #fcd39f;
 }
+select:focus,
 textarea:focus,
 .fi_txt input:focus {
   border-color: #faa73d;
 }
-
 label i {
   font-style: normal;
   color: #888;
@@ -73,24 +74,34 @@ label i {
   font-size: .92em
 }
 
-.fi_sel {
+
+
+.eval {
+  margin: 10px 7% 10px 1.76em;
+  padding-left: 10px;
+  _height:0;~min-height:0; /* ie hasLayout fix */
+}
+.eval:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
+.js-active .eval { display: none; }
+
+.eval .fi_sel {
   clear: both;
   display: block;
   padding: 4px 0 10px 0;
   width: 100%;
   overflow: hidden;
 }
-.fi_sel label {
+.eval .fi_sel label {
   float: left;
   margin: 0 10px 0 0;
   width: 30%;
 }
-.fi_sel .ui-slider {
+.eval .fi_sel .ui-slider {
   float: left;
   width: 50%;
   margin: 2px 20px 0 10px;
 }
-.fi_sel .value {
+.eval .fi_sel .value {
   margin-top: .08em;
   display: block;
   color: #999;
@@ -98,28 +109,33 @@ label i {
 }
 
 
-.fi_bdy {
+.eval .fi_bdy {
   clear: both;
   display: block;
   padding: 0 0 1px 0;
 }
-.fi_bdy label {}
-.fi_bdy textarea {
+.eval .fi_bdy label {}
+.eval .fi_bdy textarea {
+  border-width: 1px;
   margin-top: 4px;
   display: block;
   width: 98%;
+  width: 80%;
 }
-.fi_bdy textarea.invalid {
+.eval .fi_bdy textarea.invalid {
   border: 2px solid #f00;
   margin: 3px -1px -1px -1px;
 }
 
 
-
+.word {
+  display: block;
+}
 .word label { position:absolute;right:9999px;left:auto; }
 .word input {
   width: 87%;
-  font-size: 1.25em;
+  width: 40%;
+  font-size: 1.33em;
 }
 
 
@@ -157,12 +173,34 @@ fieldset.open .mover {
 
 
 
-
-.fi_btn {
-  padding: 1em 0 0 0;
-  text-align: right;
+.btnrow {
+  width: 100%;
+  overflow: hidden;
+  padding-top: 1em;
 }
-
+.fi_btn {
+  float: right;
+  margin: 0 0 1em 15px;
+}
+.fi_btn input {
+}
+.btnrow .back {
+  float: left;
+  margin: 0 15px 1em 0;
+}
+.fi_btn input {
+  background: transparent none;
+  border: none;
+  font-size: 1.25em;
+  font-weight: bold;
+  color: #fba53e;
+  padding: 2px 5px;
+}
+.fi_btn input:hover,
+.fi_btn input:focus {
+  color: #c70;
+  background-color: #dcedf4;
+}
 
 
 
@@ -175,7 +213,7 @@ fieldset.open .mover {
   border: 1px solid #000;
   background-color: #fff;
   background-color: #dcedf5;
-  background-color: #f2fafd;
+  background-color: #e9f1f8;
   color: #333;
   overflow: hidden;
   z-index: 999;

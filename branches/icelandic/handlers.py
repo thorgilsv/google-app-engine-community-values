@@ -1,7 +1,7 @@
 # coding: utf-8
 import re
 import uuid
-
+import operator
 
 from google.appengine.ext import webapp
 from google.appengine.api import mail
@@ -154,13 +154,16 @@ class EssayAssignment(CustomRequestHandler):
         else:
             essay = Essay()
             essay.member = session.get_member(self)
-        
+    
         essay_text = self.request.get('essay_text')
-        
+    
         essay.text = essay_text
         essay.put()
         
-        self.render_to_response("thanks.html")
+        if self.request.get('previous'):
+            self.redirect("/assignment?var=Verkefni 2")
+        else:
+            self.render_to_response("thanks.html")
 
 class Assignment(CustomRequestHandler):
     #TODO: require login
@@ -244,12 +247,16 @@ class Assignment(CustomRequestHandler):
         
         return tuple_list
     
-    def updateMemberAssignment(self):
+    def updateMemberAssignment(self, next=True):
         member = session.get_member(self)
-        if member.assignment == None:
+        
+        if not member.assignment:
             self.redirect(Logout.path)
         if member.assignment.name == 'Verkefni 1':
-            self.updateUser( self.getAssignment('Verkefni 2'))
+            if next:
+                self.updateUser(self.getAssignment('Verkefni 2'))
+            else:
+                self.updateUser(self.getAssignment('Verkefni 1'))
             self.redirect(Assignment.path)
         elif member.assignment.name == 'Verkefni 2':
             self.updateUser(None)
@@ -270,7 +277,11 @@ class Assignment(CustomRequestHandler):
             assignment = self.getAssignment(assignment_name)
         elif member.assignment:
             assignment = self.getAssignment(member.assignment.name)
-        else: assignment = self.getDefaultAssignment()
+        else:
+            assignment = self.getDefaultAssignment()
+        
+        if not assignment:
+            self.redirect(self.path)
             
         self.updateUser(assignment)
         
@@ -298,17 +309,17 @@ class Assignment(CustomRequestHandler):
         if not self.member:
             self.redirect(Login.path)
             return
-        
+                            
         #TODO: fix undercommenting
         field_values = []
                 
         # Fill `field_values` with values of non-empty fields.
-        for number in range(self.field_count):
+        for number in range(1, self.field_count+1):
             prefixes = ('value', 'current_state', 'headed_state', 'ideal_state', 'comment')
             fields_tuple = tuple()
             
             for prefix in prefixes:
-                field_name = '%s_%d' % (prefix, number+1)
+                field_name = '%s_%d' % (prefix, number)
                 
                 if field_name in self.request.POST:
                     field_value = self.request.POST[field_name]
@@ -320,8 +331,8 @@ class Assignment(CustomRequestHandler):
                     fields_tuple += (field_value,)
                 else:
                     continue
-            
-            default_tuple = self.get_default_tuple(number+1)
+                                
+            default_tuple = self.get_default_tuple(number)
             value_count = len(default_tuple[1:])
             
             #TODO: check that makes sure that value words are distinct -- any(...) class list
@@ -333,9 +344,22 @@ class Assignment(CustomRequestHandler):
                 # Discard tuple if equal to default (empty).
                 continue
             else:
+                order_name = 'order_%d' % number
+                field_order = order_name in self.request.POST and self.request.POST[order_name]
+                
+                if not field_order:                    
+                    continue
+                    
+                if field_order.isdigit():
+                    field_order = int(field_order)
+                else:
+                    continue
+                
                 # If all fields are present, put it in the list of tuples.
-                field_values.append((len(field_values)+1,) + fields_tuple)
+                field_values.append((field_order,) + fields_tuple)
         
+        field_values = sorted(field_values, key=operator.itemgetter(0))
+                
         non_empty_field_count = len(field_values)
         
         # Fill up the field_values tuple with empty fields to make up for the
@@ -354,18 +378,19 @@ class Assignment(CustomRequestHandler):
             self.addAnswer(value, member.assignment)
         
         has_enough_data = non_empty_field_count >= self.mandatory_field_count
+
+
+        #first set next assignment in member
+        if self.request.get('next'):
+            if member.assignment.name == 'Verkefni 1':
+                self.redirect('/assignment?var=Verkefni%202')
+            elif member.assignment.name == 'Verkefni 2':
+                self.redirect(EssayAssignment.path)
+        elif self.request.get('previous'):
+            if member.assignment.name == 'Verkefni 2':
+                self.redirect('/assignment?var=Verkefni%201')
         
-
-        if has_enough_data and self.request.get('completed'):
-            #first set next assignment in member
-            self.updateMemberAssignment()
-                        
-        elif self.request.get('quit') :
-            #the user is logging of for now
-            self.redirect(Logout.path)
-        else:
-            self.get()
-
+        self.get()
 
 class Answer(CustomRequestHandler):
     path = '/answers'
@@ -409,7 +434,7 @@ class Activation(CustomRequestHandler):
     
     def get(self):
         activation_key = self.request.get('activation_key')
-        
+            
         # Some integrity assurance.
         temporary_member = TempMember.gql('WHERE activation_key = :1', activation_key).get()
         member = Member.gql('WHERE activation_key = :1', activation_key).get()
@@ -503,7 +528,7 @@ class Registration(CustomRequestHandler):
         self.field_errors = {}
         
         self.run_validation_methods()
-        
+            
         if self.field_errors:
             # Display the form again if there were field errors.
             
@@ -643,7 +668,6 @@ class Registration(CustomRequestHandler):
                 continue
                 
             if not age.isdigit():
-                print "not digit"
                 continue
             
             if gender and age:
