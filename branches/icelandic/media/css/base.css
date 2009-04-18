@@ -18,6 +18,7 @@ html { background:#1fc4f4; }
 	background:white;
     margin: 0 auto;
 	border:3px solid #999;
+	margin-bottom: 1em;
 }
  
 #sidebar {
@@ -62,7 +63,6 @@ html { background:#1fc4f4; }
 #footer {
 	background:#fff;
 	clear:both;
-	
 }
 
 #drop-shadow-footer {

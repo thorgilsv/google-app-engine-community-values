@@ -511,8 +511,15 @@ class Registration(CustomRequestHandler):
             
             http://%s/activate?activation_key=%s
             
+            Ef þú vilt fá aðgang að verkefninu þínu síðar getur verið hentugt
+            að hafa eftirfarandi innskráningarupplýsingar við hendina:
+            
+            Netfang: %s
+            Lykilorð: %s
+            
             Takk fyrir þátttökuna,
-            Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key) #TODO: improve writing
+            Hugmyndaráðuneytið""" % (settings.DOMAIN, temporary_member.activation_key,
+                temporary_member.email, temporary_member.password) #TODO: improve writing
             )
             
 
