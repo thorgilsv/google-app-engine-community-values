@@ -12,15 +12,25 @@
 .fi_txt:after,
 .fi_sel:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
 
+
 select,
+textarea,
 .fi_txt input {
+  font-family: verdana,tahoma,helvetica,arial;
   font-size: 1em;
   background: #fff;
-  border: 1px solid #fcd39f;
+  border: 2px solid #fcd39f;
 }
 select:focus,
+textarea:focus,
 .fi_txt input:focus {
   border-color: #faa73d;
+}
+label i {
+  font-style: normal;
+  color: #888;
+  margin-left: 5px;
+  font-size: .92em
 }
 
 
@@ -32,7 +42,7 @@ select:focus,
 label,
 fieldset h3 {
   float: left;
-  width: 8.7em;
+  width: 10.2em;
   margin-right: .7em;
   color: #666;
 }
@@ -65,13 +75,13 @@ fieldset.agegender {
   margin: 0;
   font-size: 1em;
   font-weight: normal;
-  width: 7em;
+  width: 8.2em;
 }
 .agegender ol {
   float: left;
   color: #999;
   padding: 0;
-  margin: 0 0 0 9.4em;
+  margin: 0 0 0 10.9em;
   _margin-left: 4.7em;
 }
 .agegender li {
@@ -102,9 +112,20 @@ fieldset.agegender {
 }
 
 
+.btnrow {
+  width: 100%;
+  overflow: hidden;
+  padding-top: .5em;
+}
 .fi_btn {
-  padding: 1em 0 0 0;
-  text-align: right;
+  float: right;
+  margin: 0 0 1em 15px;
+}
+.fi_btn input {
+}
+.btnrow .back {
+  float: left;
+  margin: 0 15px 1em 0;
 }
 .fi_btn input {
   background: transparent none;

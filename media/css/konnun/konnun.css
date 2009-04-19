@@ -1,59 +1,3 @@
-.introtext {
-}
-
-
-.words {
-  margin: 1em 0;
-  _height:0;~min-height:0; /* ie hasLayout fix */
-}
-
-fieldset {
-  border: none;
-  background-color: #fff;
-  padding: 5px 10px;
-  margin: 0;
-  color: #666;
-  _height:0;~min-height:0; /* ie hasLayout fix */
-}
-fieldset:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
-
-fieldset:hover,
-fieldset.open {
-  /* old bgcolor: #f2fafd*/
-  background-color: #e9f1f8;
-}
-fieldset.open {
-  padding-top: 10px;
-}
-fieldset.ui-sortable-helper {
-  background-color: #e9f1f8;
-  opacity: .75;
-  filter: alpha(opacity=75);
-}
-fieldset.ui-sortable-placeholder {
-  height: 1.75em !important;
-}
-
-.js-active legend { display: none; }
-.js-active fieldset h3,
-.js-active .word,
-.js-active .mover { cursor: move; }
-.js-active .order { display: none; }
-
-
-
-fieldset h3 { /* <legend> replacement */
-  font-size: 1.17em;
-  font-weight: normal;
-  float: left;
-  width: 1.5em;
-  text-align: right;
-  margin: .17em 10px 0 0;
-}
-
-
-
-
 select,
 textarea,
 .fi_txt input {
@@ -76,80 +20,74 @@ label i {
 
 
 
-.eval {
-  margin: 10px 7% 10px 1.76em;
-  padding-left: 10px;
+
+
+
+.introtext {
+}
+
+
+.words {
+  margin: 1em 0;
   _height:0;~min-height:0; /* ie hasLayout fix */
 }
-.eval:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
-.js-active .eval { display: none; }
 
-.eval .fi_sel {
-  clear: both;
-  display: block;
-  padding: 4px 0 10px 0;
-  width: 100%;
-  overflow: hidden;
+fieldset {
+  border: none;
+  background-color: #fff;
+  padding: 0;
+  margin: 0;
+  color: #666;
+  _height:0;~min-height:0; /* ie hasLayout fix */
 }
-.eval .fi_sel label {
+fieldset:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
+
+fieldset:hover {
+  background-color: #f0f4f7;
+}
+fieldset.open {
+  /* old bgcolor: #f2fafd*/
+  background-color: #e1ecf5;
+  margin-bottom: 5px;
+}
+fieldset.ui-sortable-helper {
+  background-color: #e1ecf5;
+  opacity: .75;
+  filter: alpha(opacity=75);
+}
+
+.js-active legend { display: none; }
+.js-active fieldset h3,
+.js-active .word,
+.js-active .mover { cursor: move; }
+.js-active .order { display: none; }
+
+
+
+
+fieldset h3 { /* <legend> replacement */
+  font-size: 1.17em;
+  font-weight: normal;
   float: left;
-  margin: 0 10px 0 0;
-  width: 30%;
-}
-.eval .fi_sel .ui-slider {
-  float: left;
-  width: 50%;
-  margin: 2px 20px 0 10px;
-}
-.eval .fi_sel .value {
-  margin-top: .08em;
-  display: block;
-  color: #999;
-  font-size: .92em;
+  width: 1.5em;
+  text-align: right;
+  padding: 8px 10px 0 5px;
+  margin: 0;
 }
 
 
-.eval .fi_bdy {
-  clear: both;
-  display: block;
-  padding: 0 0 1px 0;
-}
-.eval .fi_bdy label {}
-.eval .fi_bdy textarea {
-  border-width: 1px;
-  margin-top: 4px;
-  display: block;
-  width: 98%;
-  width: 80%;
-}
-.eval .fi_bdy textarea.invalid {
-  border: 2px solid #f00;
-  margin: 3px -1px -1px -1px;
-}
-
-
-.word {
-  display: block;
-}
-.word label { position:absolute;right:9999px;left:auto; }
-.word input {
-  width: 87%;
-  width: 40%;
-  font-size: 1.33em;
-}
 
 
 
 .mover {
   float: right;
-  margin-top: -2px;
+  margin: 3px 10px 0 0;
   visibility: hidden;
 }
 fieldset:hover .mover,
 fieldset.open .mover {
   visibility: visible;
 }
-
 .mover a {
   /* image replacement */padding:0; display:block; overflow:hidden; line-height:0; text-indent:-9999px; text-align:left; font-size:1px; letter-spacing:-1em;
   width: 30px;
@@ -169,6 +107,98 @@ fieldset.open .mover {
 .mover a.dwn:active {
   background-position: -30px -16px;
 }
+
+
+
+
+
+
+.word {
+  display: block;
+  padding: 6px 0;
+}
+.word label { position:absolute;right:9999px;left:auto; }
+.word input {
+  width: 87%;
+  width: 40%;
+  font-size: 1.33em;
+}
+
+
+
+
+
+
+.eval {
+  margin: 0 0 3px 0;
+  padding: 6px 7% 8px 1.76em;
+  border-left: 15px solid #f0f4f7;
+  background-color: #f0f4f7;
+  _height:0;~min-height:0; /* ie hasLayout fix */
+}
+.eval:after { display:block; clear:both; content:"."; visibility:hidden; font-size:1px; height:0; }
+.js-active .eval { display: none; }
+
+.eval .fi_sel {
+  clear: both;
+  display: block;
+  padding: 4px 0 12px 0;
+  width: 100%;
+  overflow: hidden;
+}
+.eval .fi_sel label {
+  float: left;
+  margin: 0 10px 0 0;
+  width: 30.5%;
+}
+.eval .fi_sel .slider {
+  float: left;
+  width: 270px;
+  margin-right: 10px;
+  padding: 2px 27px 0 24px;
+  background: url(i/slider-bg.png) 50% 50% no-repeat;
+}
+.eval .fi_sel .slider .ui-slider {
+  display: block;
+  width: 100%;
+}
+
+.eval .fi_sel .value {
+  /* image replacement */padding:0; display:block; overflow:hidden; line-height:0; text-indent:-9999px; text-align:left; font-size:1px; letter-spacing:-1em;
+  width: 30px;
+  height: 30px;
+  margin-top: 0;
+  background: url(i/emoticons.png) 0 0 no-repeat;
+  position: relative;
+  top: -6px;
+}
+.eval .fi_sel .value5 { background-position: 0    0px; }
+.eval .fi_sel .value4 { background-position: 0  -30px; }
+.eval .fi_sel .value3 { background-position: 0  -60px; }
+.eval .fi_sel .value2 { background-position: 0  -90px; }
+.eval .fi_sel .value1 { background-position: 0 -120px; }
+
+
+.eval .fi_bdy {
+  clear: both;
+  display: block;
+  padding: 0 0 1px 0;
+}
+.eval .fi_bdy label {}
+.eval .fi_bdy textarea {
+  border-width: 1px;
+  margin-top: 5px;
+  display: block;
+  width: 98%;
+  width: 80%;
+}
+.eval .fi_bdy textarea.invalid {
+  border: 2px solid #f00;
+  margin: 3px -1px -1px -1px;
+}
+
+
+
 
 
 
@@ -211,9 +241,7 @@ fieldset.open .mover {
   font-size: 1.08em;
   padding: 0px;
   border: 1px solid #000;
-  background-color: #fff;
-  background-color: #dcedf5;
-  background-color: #e9f1f8;
+  background-color: #f0f4f7;
   color: #333;
   overflow: hidden;
   z-index: 999;
@@ -243,7 +271,6 @@ fieldset.open .mover {
 .ac_even {}
 
 .ac_over {
-  background-color: #96b4d4;
   background-color: #bbd3ed;
   color: #000;
 }
