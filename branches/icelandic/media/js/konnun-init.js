@@ -72,15 +72,21 @@ jQuery(function($){
   wordCont
       .attr('type', '1')
       .sortable({
-          handle: 'h3, .word, .mover',
-          cursor: 'move',
+          handle: 'h3, .word',
           /*cursorAt: {
               left: 20,
               top:  20
             },*/
-          distance: 10
+          //distance: 10,
+          cursor: 'move'
         })
-      .bind('sortupdate', reorder);
+      .bind('sortupdate', reorder)
+      .bind('sortstart', function (e, ui) {
+          ui.placeholder.css('height', '1.75em');
+          $(this).sortable( 'refreshPositions' );
+          $(this).attr('unselectable', true);
+        });
+
 
   wordCont.closest('form')
       .bind('keydown', function(e){
@@ -97,20 +103,39 @@ jQuery(function($){
           $(this)
             .prepend( moverBtns.clone(true) )
             .prepend( '<h3>'+ (i+1) +'</h3>');
-        })
-      .bind('focusin click', function(e){
-          var _this = this;
-          clearTimeout(slideopenTimeout);
-          slideopenTimeout = setTimeout(function(){
-              if (lastOpen != _this) 
-              {
-                lastOpen && $('.eval', lastOpen).slideUp().parent().removeClass('open');
-                lastOpen = _this;
-                $('.eval', _this).slideDown();
-                $(_this).addClass('open');
-              }
-            }, 400);
         });
+
+  $('h3, .word', wordCont)
+      .bind('focusin click', function (e) {
+          var _this = $(this).closest('fieldset'),
+              _clickcausedbysort = e.type == 'click'  &&  _this.data('clickcausedbysort');
+
+          _clickcausedbysort &&  _this.removeData('clickcausedbysort');
+
+          if (!slideopenTimeout  &&  !_clickcausedbysort)
+          {
+            slideopenTimeout = setTimeout(function(){
+                if (lastOpen != _this[0]) 
+                {
+                  lastOpen && $('.eval', lastOpen).slideUp().parent().removeClass('open');
+                  $('.eval', _this).slideDown();
+                  $(_this).addClass('open');
+                  $('.word input', _this).trigger('focus');
+                  lastOpen = _this[0];
+                }
+                else if ( !$(e.target).is('a, input') )
+                {
+                  $('.eval', _this).slideUp();
+                  _this.removeClass('open');
+                  $('.word input', _this).trigger('blur');
+                  lastOpen = null;
+                }
+                slideopenTimeout = null;
+              }, 400);
+          }
+        });
+
+
 
 
   $('.word input', wordCont)
@@ -147,8 +172,23 @@ jQuery(function($){
 
         })
       .autocomplete(
+        /*
+          ({
+              "ResultSet": {
+                  "totalResultsAvailable":"4",
+                  "firstResultPosition":4,
+                  "Result":4,
+                  "Result": [
+                      {"Word": "ordeild" },
+                      {"Word": "gúrka" },
+                      {"Word": "ordild" },
+                      {"Word": "ordna" },
+                      {"Word": "ordóvísíum" }
+                    ]
+                }
+            }).ResultSet.Result,
+        */
           '/ordabok',
-          //'Indíukirsuber,Epli,Apríkósur,Asískar perur,Lárperur,Banani,Bananamelónur,Bláber,Brómber,Brauðávöxtur,Kaktusfíkja,Stjörnuávöxtur,Kirsuber,Trönuber,Rifsber,Sólber,Morgunberkja,Döðlur,Blá hindber,Drekaávöxtur,Dáraaldin,Ylliber,Fíkjur,Garðaber,Stikilsber,Greipaldin,Guava,Hunangs melóna,Saðningaraldin,Jujube,Kantalúpmelónur,Kívanó,Kíví (loðber),Dvergappelsína,kúmkvat,Sítrónur,Súraldin;límónur,Litkaber,Loganber,Longan,Dúnepli,Loquat,Mandarínur,Mangó,Mangosteen,Svört mórber,Nektarínur,Ólífur,Appelsínur,Appelsínur beiskar,Papaja,Ástaraldin,Píslaraldin,Ferskjur,Perur,Pepino,Döðluplóma,Mjölbananar,Plómur,Ananas,Pómelóaldin,Granatepli,Kveði,Rúsínur,Rambútan,Hindber,Jarðaber,Vínber,Tamarind,Tamarillo,Ugli,Vatnsmelónur,Grænmeti og fl.,Akorn grasker,Túnætisveppur,Spergill,Aspas,Eggaldin,Rauðrófur,Blaðbeðja (strandblaðka),Blue hubbard grasker,Kóngssveppur,Spergilkál,Rósakál,Buttercup grasker,Barbapabba grasker,Hvítkál,Fingrakornblóm,Carnival grasker,Gulrætur,Blómkál,Hnúðselja,sellerírót,Stilkselja,Sellerí,Ætisveppur,Kínakál,Kúrbítur af graskeraættDvergbítur,Agúrkur,Delicata grasker,Vetrarsalat,Fennika(sígóð),Hvítlaukur,Þrúgugúrkur,Ætiþistill,Höfuðkál,Humall,Piparrót,Íssalat,Ætifífill,Grænkál,Hnúðkál,Blaðlaukur,Laukur,Nípa,Steinseljurót,Paprikur,Kartöflur,Pumpkin grasker,Hreðkur (radísur),Red kuri grasker,Red turban grasker,Rabarbari,Hafursrót,Skalottlaukur (askalonlaukur),Spagettí grasker,Spínat,Perlulaukur,Maís,Korn,Maískólfar,Sætuhnúðar,sætar kartöflur,Gulrófur,Sweet dumpling grasker,Tómatar,Næpur,Kínakartöflur,Kryddjurtir,Kerfill,Graslaukur,Blaðselja,Karsi (garðperla),Vatnakarsi,Vorsalat,Steinselja,Jólasalat,Hnetur,Möndlur,Brasilíuhnetur,Kasúhnetur,Kastaníu hnetur,Kókoshnetur,Heslihnetur,Makademía hnetur,Pekan hnetur,Jarðhnetur,Furu hnetur,Pistasíu hnetur (hjartaaldin),Valhnetur,Krydd,Kúmenfræ,Einiber,Múskat,Pipar svartur og hvítur,Vanillufræ,Fræ,Baðmullarfræ,Hörfræ,Sinnepsfræ,Ertur (án fræbelgs),Ertur (með fræbelg),Valmúafræ (birki),Repjufræ,Sesamfræ,Sólblómafræ,Baunir,Rauðar nýrnabaunir,Adúkí baunir,Anasasí baunir,Boston baunir,Kjúklingabaunir,Fava baunir,Límabaunir,Smjörbaunir,Pintó baunir,Sojabaunir'.split(','),
           {
             //minChars: 1, // 1 or 0
             //autoFill: false,
@@ -157,6 +197,11 @@ jQuery(function($){
             matchContains: true,
             qParam: 'sw',
             extraParams: { dbid: '2' },
+            parse: function(data){
+                data = window["eval"]("(" + data + ")");
+                return (data.ResultSet && data.ResultSet.Result) || [];
+              },
+            formatItem: function(row, i, max) { return row.Word; },
             scrollHeight: 220
           }
         );
@@ -171,7 +216,9 @@ jQuery(function($){
               startVal = selElm.val() || Math.ceil( (maxVal+minVal)/2 ),
               changeHandler = function (e, ui) {
                   selElm.val( ui.value );
-                  valElm.text( $('option[selected]', selElm).text() );
+                  valElm
+                      .text( $('option[selected]', selElm).text() )
+                      .attr('class', 'value value'+ui.value);
                 };
           var valElm  = $('<span class="value" />').insertAfter( selElm )
           $('<span />')
@@ -181,8 +228,9 @@ jQuery(function($){
                   min:     minVal,
                   value:   startVal
                 })
-              .bind('slidechange', changeHandler)
-              .insertAfter( selElm );
+              .bind('slide', changeHandler)
+              .insertAfter( selElm )
+              .wrap( '<span class="slider" />' );
 
 
           changeHandler(null, { value: startVal });
