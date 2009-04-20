@@ -10,7 +10,7 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 7 times in query history.
+# Used 232 times in query history.
 - kind: AssignmentAnswer
   properties:
   - name: assignment
