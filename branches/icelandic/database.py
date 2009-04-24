@@ -41,7 +41,7 @@ class AssignmentAnswer(db.Model):
     current_state = db.IntegerProperty()
     headed_state = db.IntegerProperty()
     ideal_state = db.IntegerProperty()
-    comment = db.StringProperty()
+    comment = db.TextProperty()
     answer_number = db.IntegerProperty()
     assignment = db.ReferenceProperty(Assignments)
     
