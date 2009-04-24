@@ -198,10 +198,18 @@ jQuery(function($){
             qParam: 'sw',
             extraParams: { dbid: '2' },
             parse: function(data){
-                data = window["eval"]("(" + data + ")");
-                return (data.ResultSet && data.ResultSet.Result) || [];
+                data = (window["eval"]("("+data+")") || {}).ResultSet || {};
+                var rows = data.Result || [];
+                for (var i=0, word; (word = rows[i]); i++)
+                {
+                  word = word.Word;
+                  rows[i] = { data: word,  value: word,  result: word };
+                }
+                return rows;
               },
-            formatItem: function(row, i, max) { return row.Word; },
+            formatItem: function(row, i, max) {
+                return row;
+              },
             scrollHeight: 220
           }
         );
