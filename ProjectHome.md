@@ -1,0 +1,1 @@
+This applications aims to find the most core values of a given society.  More information will be available as it gets developed.
